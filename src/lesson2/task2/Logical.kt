@@ -27,7 +27,7 @@ fun isNumberHappy(number: Int): Boolean = (number/1000+number%1000/100)==(number
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
-        ((x1 == x2) || (y1 == y2) || (Math.abs((x1-x2)) == Math.abs((y1-y2))))
+        (x1 == x2) || (y1 == y2) || Math.abs(x1-x2) == Math.abs(y1-y2)
 
 
 /**
@@ -38,11 +38,13 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
  */
 fun daysInMonth(month: Int, year: Int): Int {
     val vis = ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)
-    return when {
-        ((month == 4) || (month == 6) || (month == 9) || (month == 11)) -> 30
-        (month == 2) && (vis == true) -> 29
-        (month == 2) && (vis == false) -> 28
-        else -> 31
+    return when (month) {
+        4, 6, 9, 11 -> 30
+        1, 3, 5, 7, 8, 10, 12 -> 31
+        else -> {
+            return if (vis) 29
+            else 28
+        }
     }
 }
 
