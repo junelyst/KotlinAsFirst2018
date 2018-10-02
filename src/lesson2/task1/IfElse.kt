@@ -153,10 +153,10 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val cosB = (a * a + c * c - b * b) / (2.0 * a * c)
     val cosC = (a * a + b * b - c * c) / (2.0 * a * b)
     return when {
-        ((cosA > 0) && (cosA < 1)) && ((cosB > 0) && (cosB < 1)) && ((cosC > 0) && (cosC < 1)) -> 0
         (cosA == 0.0) || (cosB == 0.0) || (cosC == 0.0) -> 1
-        ((cosA > -1) && (cosA < 0)) || ((cosB > -1) && (cosB < 0)) || ((cosC > -1) && (cosC < 0)) -> 2
-        else -> -1
+        (Math.abs(cosA) >= 1.0) || (Math.abs(cosB) >= 1.0) || (Math.abs(cosC) >= 1.0) -> -1
+        (cosA in -1.0..0.0) || (cosB in -1.0..0.0) || (cosC in -1.0..0.0) -> 2
+        else -> 0
     }
 }
 

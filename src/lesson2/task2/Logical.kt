@@ -72,8 +72,7 @@ fun daysInMonth(month: Int, year: Int): Int {
      * Вернуть true, если кирпич пройдёт
      */
     fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-        val max = Math.max (c, Math.max (a, b))
-        val middle = Math.max (Math.min (c, Math.max (a, b)), Math.min (a, b))
-        val min = a + b + c - max - middle
-        return (Math.min (r, s) >= min) && (Math.max (r, s) >= middle)
+        val min = minOf (a, b, c)
+        val middle = a + b + c - maxOf (a, b, c) - min
+        return (minOf (r, s) >= min) && (maxOf (r, s) >= middle)
     }
