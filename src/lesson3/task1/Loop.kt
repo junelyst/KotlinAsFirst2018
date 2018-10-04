@@ -72,7 +72,7 @@ fun digitNumber(n: Int): Int {
     do {
         number /= 10
         count++
-    } while (number > 0)
+    } while (number != 0)
     return count
 }
 
@@ -102,13 +102,14 @@ fun fib(n: Int): Int {
  */
 fun lcm(m: Int, n: Int): Int {
     var k = 0
-    for (i in Math.min(m, n)..m * n + 1) {
+    if (maxOf(m, n) % minOf(m, n) == 0) return maxOf(m, n)
+    else for (i in Math.max(m, n)..m * n) {
         if (i % m == 0 && i % n == 0) {
             k = i
             break
         }
     }
-      return k
+    return k
 }
 
 /**
