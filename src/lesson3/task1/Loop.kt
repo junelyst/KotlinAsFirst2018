@@ -1,7 +1,6 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson3.task1
 
-import java.math.RoundingMode
 import kotlin.math.sqrt
 
 /**
