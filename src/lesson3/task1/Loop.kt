@@ -92,7 +92,7 @@ fun fib(n: Int): Int {
         fib = fb1 + fb2
     }
     return fib
-    }
+}
 
 /**
  * Простая
@@ -116,7 +116,7 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var k = 0
+    var k = 1
     for (i in 2..n) {
         if (n % i == 0) {
           k = i
@@ -131,16 +131,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    var k = 0
-    for (i in n - 1 downTo 1) {
-        if (n % i == 0) {
-            k = i
-            break
-        }
-    }
-    return k
-}
+fun maxDivisor(n: Int): Int = n / minDivisor (n)
 
 /**
  * Простая
@@ -258,21 +249,14 @@ fun cos(x: Double, eps: Double): Double {
  */
 fun revert(n: Int): Int {
     var num = n
-    var count = 0.0
-    var x = 0
-    var res = 0.0
-    while (num > 0){
+    var dig = 0
+    var res = 0
+    while (num != 0) {
+        dig = num % 10
+        res = res * 10 + dig
         num /= 10
-        count++
     }
-    if (count == 0.0) return n
-        else {
-        for (i in 1..count.toInt()) {
-            x = (n / Math.pow (10.0, count - i)).toInt() % 10
-            res += x * Math.pow ( 10.0, i.toDouble() - 1)
-        }
-    }
-    return res.toInt()
+    return res
 }
 
 /**
@@ -284,27 +268,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    var number = n
-    var count = 0.0
-    var i = 1.0
-    var num1 = 0
-    var num2 = 0
-    while (number > 0){
-        number /= 10
-        count++
-    }
-    if (count == 1.0) return true
-        else {
-        while (i < count) {
-            num1 = ((n % Math.pow(10.0, i)).toInt()) / Math.pow(10.0, i - 1).toInt()
-            num2 = (n / Math.pow(10.0, count - i)).toInt() % 10
-            if (num1 != num2) return false
-            i++
-        }
-         return true
-    }
-}
+fun isPalindrome(n: Int): Boolean = revert(n) == n
 
 /**
  * Средняя
@@ -384,7 +348,7 @@ fun fibSequenceDigit(n: Int): Int {
     var i = 1
     var time = 0.0
     var fb = 7
-    if (n < 7) return fib (n)
+    if (n < 7) return fib(n)
     else while (count != n.toDouble()) {
         num = fib (fb).toDouble()
         vr = num.toInt()
