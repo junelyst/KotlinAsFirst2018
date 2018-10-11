@@ -262,6 +262,7 @@ fun factorizeToString(n: Int): String  {
 fun convert(n: Int, base: Int): List<Int> {
     var result = mutableListOf<Int>()
     var num = n
+    if (n == 0) result.add (0)
     while (num != 0) {
         result.add (num % base)
         num /= base
@@ -440,7 +441,8 @@ fun russian(n: Int): String {
                 res.add (ten [part1 / 10])
                 part1 %= 10
             }
-        if (part1 in 1..9) res.add (th [part1] + " тысячи")
+        if (part1 == 5) res.add (th [part1] + " тысяч")
+        if ((part1 in 1..4) || (part1 in 6..9)) res.add (th [part1] + " тысячи")
         if (part2 / 100 > 0)  {
             res.add (hund [part2 / 100])
             part2 %= 100
