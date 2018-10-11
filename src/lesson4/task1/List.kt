@@ -442,8 +442,9 @@ fun russian(n: Int): String {
                 res.add (ten [part1 / 10])
                 part1 %= 10
             }
-        if (part1 == 5) res.add (th [part1] + " тысяч")
-        if ((part1 in 1..4) || (part1 in 6..9)) res.add (th [part1] + " тысячи")
+        if (part1 in 5..9) res.add (th [part1] + " тысяч")
+        if (part1 in 2..4) res.add (th [part1] + " тысячи")
+        if (part1 == 1) res.add (th [part1] + " тысяча")
         if (part2 / 100 > 0)  {
             res.add (hund [part2 / 100])
             part2 %= 100
