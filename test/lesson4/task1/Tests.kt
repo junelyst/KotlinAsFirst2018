@@ -192,7 +192,7 @@ class Tests {
         assertEquals("13c", convertToString(250, 14))
         assertEquals("2ec", convertToString(1000, 19))
         assertEquals("z", convertToString(35, 36))
-        assertEquals("0", convertToString(0, 3))
+        assertEquals("0", convertToString(0, 25))
         assertEquals("a02220281", convertToString(Int.MAX_VALUE, 11))
     }
 
@@ -241,6 +241,7 @@ class Tests {
         assertEquals("девятьсот тысяч", russian(900000))
         assertEquals("двенадцать", russian(12))
         assertEquals("девятнадцать тысяч восемьсот один", russian(19801))
+        assertEquals("двести пятьдесят три тысячи сто одиннадцать", russian(253111))
         assertEquals("четыреста восемьдесят пять тысяч семьсот девяносто шесть", russian(485796))
     }
 }

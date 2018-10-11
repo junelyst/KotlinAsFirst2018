@@ -288,6 +288,7 @@ fun convertToString(n: Int, base: Int): String {
     var number = ""
     var b = 0
     var num = n
+    if (n == 0) return "0"
     while ((base > 9) && (b + 9 != base)) {
         letters += "$x"
         x++
@@ -450,6 +451,10 @@ fun russian(n: Int): String {
         if (part2 / 10 > 1)  {
             res.add (ten [part2 / 10])
             part2 %= 10
+        }
+        if (part2 in 10..19)  {
+            res.add (num [part2 - 10])
+            part2 = -1
         }
         if (part2 in 1..9)  res.add (dig [part2])
     return res.joinToString (separator = " ")
