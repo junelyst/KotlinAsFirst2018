@@ -217,7 +217,7 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    var factorize = mutableListOf<Int>()
+    val factorize = mutableListOf<Int>()
     var factor = 2
     var num = n
     while (num != 1) {
@@ -238,7 +238,7 @@ fun factorize(n: Int): List<Int> {
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
 fun factorizeToString(n: Int): String  {
-    var factorize = mutableListOf<Int>()
+    val factorize = mutableListOf<Int>()
     var factor = 2
     var num = n
     if (isPrime(n)) return "$n"
@@ -260,14 +260,14 @@ fun factorizeToString(n: Int): String  {
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
 fun convert(n: Int, base: Int): List<Int> {
-    var result = mutableListOf<Int>()
+    val result = mutableListOf<Int>()
     var num = n
     if (n == 0) result.add (0)
     while (num != 0) {
         result.add (num % base)
         num /= base
     }
-    var resultSort = mutableListOf<Int>()
+    val resultSort = mutableListOf<Int>()
     for (i in 0 until result.size) {
         resultSort.add (result [result.size - i - 1])
     }
@@ -335,7 +335,7 @@ fun decimalFromString(str: String, base: Int): Int {
     var letters = ""
     var x = 'a'
     var b = 0
-    var count =  mutableListOf<Int>()
+    val count =  mutableListOf<Int>()
     while ((base > 9) && (b + 10 != base)) {
         letters += "$x"
         x++
@@ -424,7 +424,7 @@ fun russian(n: Int): String {
     val hund = listOf<String>("-", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот",
             "семьсот", "восемьсот", "девятьсот")
     val th = listOf<String>("-", "одна", "две",  "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    var res = mutableListOf<String>()
+    val res = mutableListOf<String>()
     var part1 = n / 1000
     var part2 = n % 1000
     if (n in 1..9) return dig [n]
