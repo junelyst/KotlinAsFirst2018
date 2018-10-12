@@ -439,8 +439,9 @@ fun russian(n: Int): String {
                 part1 = -1
             }
         if (part1 / 10 > 1) {
-                res.add (ten [part1 / 10])
-                part1 %= 10
+            if (part1 % 10 == 0) res.add (ten [part1 / 10] + " тысяч")
+            else res.add (ten [part1 / 10])
+            part1 %= 10
             }
         if (part1 in 5..9) res.add (th [part1] + " тысяч")
         if (part1 in 2..4) res.add (th [part1] + " тысячи")
