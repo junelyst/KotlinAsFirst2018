@@ -120,9 +120,9 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
 fun abs(v: List<Double>): Double {
     var abs = 0.0
     for (element in v) {
-      abs += element * element
+        abs += element * element
     }
-    return sqrt (abs)
+    return sqrt(abs)
 }
 
 /**
@@ -146,8 +146,8 @@ fun mean(list: List<Double>): Double {
 fun center(list: MutableList<Double>): MutableList<Double> {
     if (list.isEmpty()) return list
     else {
-    val num = mean (list)
-    for (i in 0 until list.size) list[i] -= num
+        val num = mean(list)
+        for (i in 0 until list.size) list[i] -= num
     }
     return list
 }
@@ -163,9 +163,8 @@ fun times(a: List<Double>, b: List<Double>): Double {
     var result = 0.0
     if (a.isEmpty() || b.isEmpty()) return 0.0
     else
-        for (i in 0 until a.size) {
-        result += a[i] * b[i]
-    }
+        for (i in 0 until a.size)
+            result += a[i] * b[i]
     return result
 }
 
@@ -181,12 +180,12 @@ fun polynom(p: List<Double>, x: Double): Double {
     var pol = 0.0
     var k = 1.0
     if (p.isEmpty())
-    return 0.0
+        return 0.0
     else
         for (element in p) {
-        pol += element * k
-        k *= x
-    }
+            pol += element * k
+            k *= x
+        }
     return pol
 }
 
@@ -202,10 +201,10 @@ fun polynom(p: List<Double>, x: Double): Double {
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
     if (list.isEmpty())
-    return list
+        return list
     else
         for (i in 1 until list.size)
-        list [i] += list [i - 1]
+            list[i] += list[i - 1]
     return list
 }
 
@@ -220,7 +219,7 @@ fun factorize(n: Int): List<Int> {
     val factorize = mutableListOf<Int>()
     var factor = 2
     var num = n
-    while (num != 1)  {
+    while (num != 1) {
         if (num % factor == 0) {
             factorize.add(factor)
             num /= factor
@@ -237,10 +236,10 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String  {
+fun factorizeToString(n: Int): String {
     var factor = listOf<Int>()
     if (isPrime(n)) return "$n"
-    else factor = factorize (n)
+    else factor = factorize(n)
     return factor.joinToString(separator = "*")
 }
 
@@ -254,9 +253,9 @@ fun factorizeToString(n: Int): String  {
 fun convert(n: Int, base: Int): List<Int> {
     val result = mutableListOf<Int>()
     var num = n
-    if (n == 0) result.add (0)
+    if (n == 0) result.add(0)
     while (num != 0) {
-        result.add (num % base)
+        result.add(num % base)
         num /= base
     }
     return result.reversed()
@@ -275,7 +274,7 @@ fun convertToString(n: Int, base: Int): String {
     var number = listOf<Int>()
     val result = StringBuilder()
     if (n == 0) return "0"
-    number = convert (n, base)
+    number = convert(n, base)
     for (element in number) {
         if (element < 10) result.append(element.toString())
         else result.append(x + (element % base - 10))
@@ -314,17 +313,17 @@ fun decimalFromString(str: String, base: Int): Int {
     val letters = StringBuilder()
     var x = 'a'
     var b = 0
-    val count =  mutableListOf<Int>()
+    val count = mutableListOf<Int>()
     while ((base > 9) && (b + 10 != base)) {
         letters.append(x)
         x++
         b++
     }
     for (i in 0 until str.length) {
-        if (str[i] in letters) count.add (letters.indexOf(str [i], 0) + 10)
-        else count.add (str.substring (i, i + 1).toInt())
+        if (str[i] in letters) count.add(letters.indexOf(str[i], 0) + 10)
+        else count.add(str.substring(i, i + 1).toInt())
     }
-    return decimal (count, base)
+    return decimal(count, base)
 }
 
 /**
@@ -340,7 +339,7 @@ fun roman(n: Int): String {
     var count = 0
     val res = StringBuilder()
     val numbers = mapOf(1000 to "M", 900 to "CM", 500 to "D", 400 to "CD",
-        100 to "C", 90 to "XC", 50 to "L", 40 to "XL", 10 to "X", 9 to "IX", 5 to "V", 4 to "IV", 1 to "I")
+100 to "C", 90 to "XC", 50 to "L", 40 to "XL", 10 to "X", 9 to "IX", 5 to "V", 4 to "IV", 1 to "I")
     for ((key, value) in numbers) {
         count = num / key
         num %= key
@@ -352,13 +351,13 @@ fun roman(n: Int): String {
     return res.toString()
 }
 
-    /**
-     * Очень сложная
-     *
-     * Записать заданное натуральное число 1..999999 прописью по-русски.
-     * Например, 375 = "триста семьдесят пять",
-     * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
-     */
+/**
+* Очень сложная
+*
+* Записать заданное натуральное число 1..999999 прописью по-русски.
+* Например, 375 = "триста семьдесят пять",
+* 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
+*/
 fun russian(n: Int): String {
     val dig = listOf<String>("-", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val num = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
@@ -368,7 +367,7 @@ fun russian(n: Int): String {
     val hund = listOf<String>("-", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот",
             "семьсот", "восемьсот", "девятьсот")
     val th = listOf<String>("-", "одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-        val res = mutableListOf<String>()
+    val res = mutableListOf<String>()
     var part1 = n / 1000
     val w = part1
     var part2 = n % 1000
