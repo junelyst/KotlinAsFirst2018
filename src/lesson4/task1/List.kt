@@ -119,8 +119,8 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  */
 fun abs(v: List<Double>): Double {
     var abs = 0.0
-    for (i in 0 until v.size) {
-      abs += v[i] * v[i]
+    for (element in v) {
+      abs += element * element
     }
     return sqrt (abs)
 }
@@ -131,10 +131,8 @@ fun abs(v: List<Double>): Double {
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
 fun mean(list: List<Double>): Double {
-    return when {
-        list.isNotEmpty() -> list.sum() / list.size
-        else -> 0.0
-    }
+    return if (list.isNotEmpty()) list.sum() / list.size
+    else 0.0
 }
 
 /**
@@ -146,10 +144,10 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    val num = list.sum() / list.size
     if (list.isEmpty()) return list
-    else for (i in 0 until list.size) {
-        list [i] -= num
+    else {
+    val num = mean (list)
+    for (i in 0 until list.size) list[i] -= num
     }
     return list
 }
@@ -162,12 +160,13 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
 fun times(a: List<Double>, b: List<Double>): Double {
-    val result = mutableListOf<Double>()
+    var result = 0.0
     if (a.isEmpty() || b.isEmpty()) return 0.0
-    else for (i in 0 until a.size) {
-        result.add (a[i] * b[i])
+    else
+        for (i in 0 until a.size) {
+        result += a[i] * b[i]
     }
-    return result.sum()
+    return result
 }
 
 /**
@@ -180,9 +179,13 @@ fun times(a: List<Double>, b: List<Double>): Double {
  */
 fun polynom(p: List<Double>, x: Double): Double {
     var pol = 0.0
-    if (p.isEmpty()) return 0.0
-    else for (i in 0 until p.size) {
-        pol += p[i] * Math.pow (x, i.toDouble())
+    var k = 1.0
+    if (p.isEmpty())
+    return 0.0
+    else
+        for (element in p) {
+        pol += element * k
+        k *= x
     }
     return pol
 }
@@ -198,14 +201,11 @@ fun polynom(p: List<Double>, x: Double): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
-    var sum = 0.0
-    var k = 0.0
-    if (list.isEmpty()) return list
-    else for (i in 0 until list.size) {
-        k = list [i]
-        list [i] += sum
-        sum += k
-    }
+    if (list.isEmpty())
+    return list
+    else
+        for (i in 1 until list.size)
+        list [i] += list [i - 1]
     return list
 }
 
@@ -220,14 +220,14 @@ fun factorize(n: Int): List<Int> {
     val factorize = mutableListOf<Int>()
     var factor = 2
     var num = n
-    while (num != 1) {
-        if ((num % factor == 0) && (isPrime(factor))) {
+    while (num != 1)  {
+        if (num % factor == 0) {
             factorize.add(factor)
             num /= factor
         }
-        if (num % factor != 0) factor++
+        else factor++
     }
-    return factorize.sorted()
+    return factorize
 }
 
 /**
@@ -238,18 +238,10 @@ fun factorize(n: Int): List<Int> {
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
 fun factorizeToString(n: Int): String  {
-    val factorize = mutableListOf<Int>()
-    var factor = 2
-    var num = n
+    var factor = listOf<Int>()
     if (isPrime(n)) return "$n"
-    while (num != 1) {
-        if ((num % factor == 0) && (isPrime(factor))) {
-            factorize.add(factor)
-            num /= factor
-        }
-        if (num % factor != 0) factor++
-    }
-    return factorize.sorted().joinToString(separator = "*")
+    else factor = factorize (n)
+    return factor.joinToString(separator = "*")
 }
 
 /**
@@ -267,11 +259,7 @@ fun convert(n: Int, base: Int): List<Int> {
         result.add (num % base)
         num /= base
     }
-    val resultSort = mutableListOf<Int>()
-    for (i in 0 until result.size) {
-        resultSort.add (result [result.size - i - 1])
-    }
-    return resultSort
+    return result.reversed()
 }
 
 /**
@@ -283,28 +271,16 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String {
-    var letters = ""
-    var x = 'a'
-    var number = ""
-    var b = 0
-    var num = n
+    val x = 'a'
+    var number = listOf<Int>()
+    val result = StringBuilder()
     if (n == 0) return "0"
-    while ((base > 9) && (b + 9 != base)) {
-        letters += "$x"
-        x++
-        b++
+    number = convert (n, base)
+    for (element in number) {
+        if (element < 10) result.append(element.toString())
+        else result.append(x + (element % base - 10))
     }
-    if (base < 10) return convert (n, base).joinToString(separator = "")
-    else while (num != 0) {
-        if (num % base < 10) number += (num % base).toString()
-        else number += letters [num % base - 10]
-        num /= base
-    }
-    var result = ""
-    for (i in 0 until number.length) {
-        result += number [number.length - i - 1]
-    }
-    return result
+    return result.toString()
 }
 
 /**
@@ -315,11 +291,14 @@ fun convertToString(n: Int, base: Int): String {
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
 fun decimal(digits: List<Int>, base: Int): Int {
-    var result = 0.0
-    for (i in 0 until digits.size) {
-        result += digits [i] * base.toDouble().pow (digits.size - i - 1)
+    var result = 0
+    var x = base
+    if (digits.size == 1) return digits.first()
+    for (i in (digits.size - 2) downTo 0) {
+        result += digits [i] * x
+        x *= base
     }
-    return result.toInt()
+    return result + digits.last()
 }
 
 /**
@@ -332,12 +311,12 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int {
-    var letters = ""
+    val letters = StringBuilder()
     var x = 'a'
     var b = 0
     val count =  mutableListOf<Int>()
     while ((base > 9) && (b + 10 != base)) {
-        letters += "$x"
+        letters.append(x)
         x++
         b++
     }
@@ -358,63 +337,28 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun roman(n: Int): String {
     var num = n
-    var res = ""
-    if (num >= 1000)  {
-        res += "M".repeat(num / 1000)
-        num %= 1000
-    }
-    when {
-        num / 100 == 9 -> {
-            res += "CM"
-            num %= 100
-        }
-        num / 100 in 5..8 -> {
-            res += "D" + "C".repeat(num / 100 - 5)
-            num %= 100
-        }
-        num /100 == 4 -> {
-            res += "CD"
-            num %= 100
-        }
-        num / 100 in 1..3 -> {
-            res += "C".repeat(num / 100)
-            num %= 100
+    var count = 0
+    val res = StringBuilder()
+    val numbers = mapOf(1000 to "M", 900 to "CM", 500 to "D", 400 to "CD",
+        100 to "C", 90 to "XC", 50 to "L", 40 to "XL", 10 to "X", 9 to "IX", 5 to "V", 4 to "IV", 1 to "I")
+    for ((key, value) in numbers) {
+        count = num / key
+        num %= key
+        while (count != 0) {
+            res.append(value)
+            count--
         }
     }
-    when {
-        num / 10 == 9 -> {
-            res += "XC"
-            num %= 10
-        }
-        num / 10 in 5..8 -> {
-            res += "L" + "X".repeat(num / 10 - 5)
-            num %= 10
-        }
-        num / 10 == 4 -> {
-            res += "XL"
-            num %= 10
-        }
-        num / 10 in 1..3 -> {
-            res += "X".repeat(num / 10)
-            num %= 10
-        }
-    }
-    when {
-        num == 9 -> res += "IX"
-        num in 5..8 -> res += "V" + "I".repeat(num - 5)
-        num == 4 -> res += "IV"
-        num in 1..3 -> res += "I".repeat(num)
-    }
-    return res
-    }
+    return res.toString()
+}
 
-/**
- * Очень сложная
- *
- * Записать заданное натуральное число 1..999999 прописью по-русски.
- * Например, 375 = "триста семьдесят пять",
- * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
- */
+    /**
+     * Очень сложная
+     *
+     * Записать заданное натуральное число 1..999999 прописью по-русски.
+     * Например, 375 = "триста семьдесят пять",
+     * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
+     */
 fun russian(n: Int): String {
     val dig = listOf<String>("-", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val num = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
@@ -423,41 +367,45 @@ fun russian(n: Int): String {
             "семьдесят", "восемьдесят", "девяносто")
     val hund = listOf<String>("-", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот",
             "семьсот", "восемьсот", "девятьсот")
-    val th = listOf<String>("-", "одна", "две",  "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
-    val res = mutableListOf<String>()
+    val th = listOf<String>("-", "одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+        val res = mutableListOf<String>()
     var part1 = n / 1000
+    val w = part1
     var part2 = n % 1000
-    if (n in 1..9) return dig [n]
-    if (n in 10..19) return num [n - 10]
-        if (part1 / 100 > 0) {
-            if (part1 % 100 == 0) res.add (hund [part1 / 100] + " тысяч")
-            else res.add (hund [part1 / 100])
-            part1 %= 100
-            }
-        if (part1 in 10..19) {
-                res.add (num [part1 - 10] + " тысяч")
-                part1 = -1
-            }
-        if (part1 / 10 > 1) {
-            if (part1 % 10 == 0) res.add (ten [part1 / 10] + " тысяч")
-            else res.add (ten [part1 / 10])
-            part1 %= 10
-            }
-        if (part1 in 5..9) res.add (th [part1] + " тысяч")
-        if (part1 in 2..4) res.add (th [part1] + " тысячи")
-        if (part1 == 1) res.add (th [part1] + " тысяча")
-        if (part2 / 100 > 0)  {
-            res.add (hund [part2 / 100])
-            part2 %= 100
+    if (n in 1..9) return dig[n]
+    if (n in 10..19) return num[n - 10]
+    if (part1 / 100 > 0) {
+        if (part1 % 100 == 0) res.add(hund[part1 / 100])
+        else res.add(hund[part1 / 100])
+        part1 %= 100
+    }
+    if (part1 in 10..19) res.add(num[part1 - 10])
+    if (part1 / 10 > 1) {
+        if (part1 % 10 == 0) res.add(ten[part1 / 10])
+        else res.add(ten[part1 / 10])
+        part1 %= 10
+    }
+    when {
+        part1 in 5..9 -> res.add(th[part1])
+        part1 in 2..4 -> res.add(th[part1])
+        part1 == 1 -> res.add(th[part1])
+    }
+    if (w != 0) {
+        when (w % 10) {
+            1 -> res.add("тысяча")
+            2, 3, 4 -> res.add("тысячи")
+            0, 5, 6, 7, 8, 9 -> res.add("тысяч")
         }
-        if (part2 / 10 > 1)  {
-            res.add (ten [part2 / 10])
-            part2 %= 10
-        }
-        if (part2 in 10..19)  {
-            res.add (num [part2 - 10])
-            part2 = -1
-        }
-        if (part2 in 1..9)  res.add (dig [part2])
-    return res.joinToString (separator = " ")
+    }
+    if (part2 / 100 > 0) {
+        res.add(hund[part2 / 100])
+        part2 %= 100
+    }
+    if (part2 / 10 > 1) {
+        res.add(ten[part2 / 10])
+        part2 %= 10
+    }
+    if (part2 in 10..19) res.add(num[part2 - 10])
+    if (part2 in 1..9) res.add(dig[part2])
+    return res.joinToString(separator = " ")
 }
