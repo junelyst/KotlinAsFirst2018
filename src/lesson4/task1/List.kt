@@ -391,10 +391,10 @@ fun russian(n: Int): String {
         part1 == 1 -> res.add(th[part1])
     }
     if (w != 0) {
-        when (w % 10) {
-            1 -> res.add("тысяча")
-            2, 3, 4 -> res.add("тысячи")
-            0, 5, 6, 7, 8, 9 -> res.add("тысяч")
+        when {
+            (w % 100 in 10..19) || (w % 10 in 5..9) || (w % 10 == 0) -> res.add("тысяч")
+            w % 10 == 1 -> res.add("тысяча")
+            w % 10 in 2..4 -> res.add("тысячи")
         }
     }
     if (part2 / 100 > 0) {
