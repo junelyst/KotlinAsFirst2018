@@ -4,7 +4,6 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.sqrt
-import kotlin.math.pow
 import lesson3.task1.isPrime
 
 /**
@@ -144,11 +143,11 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    if (list.isEmpty()) return list
-    else {
-        val num = mean(list)
-        for (i in 0 until list.size) list[i] -= num
-    }
+    if (list.isEmpty())
+        return list
+    val num = mean(list)
+    for (i in 0 until list.size)
+        list[i] -= num
     return list
 }
 
@@ -161,10 +160,10 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  */
 fun times(a: List<Double>, b: List<Double>): Double {
     var result = 0.0
-    if (a.isEmpty() || b.isEmpty()) return 0.0
-    else
-        for (i in 0 until a.size)
-            result += a[i] * b[i]
+    if (a.isEmpty() || b.isEmpty())
+        return 0.0
+    for (i in 0 until a.size)
+        result += a[i] * b[i]
     return result
 }
 
@@ -181,11 +180,10 @@ fun polynom(p: List<Double>, x: Double): Double {
     var k = 1.0
     if (p.isEmpty())
         return 0.0
-    else
-        for (element in p) {
-            pol += element * k
-            k *= x
-        }
+    for (element in p) {
+        pol += element * k
+        k *= x
+    }
     return pol
 }
 
@@ -202,9 +200,8 @@ fun polynom(p: List<Double>, x: Double): Double {
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
     if (list.isEmpty())
         return list
-    else
-        for (i in 1 until list.size)
-            list[i] += list[i - 1]
+    for (i in 1 until list.size)
+        list[i] += list[i - 1]
     return list
 }
 
@@ -225,6 +222,10 @@ fun factorize(n: Int): List<Int> {
             num /= factor
         }
         else factor++
+        if (isPrime(num)) {
+            factorize.add(num)
+            break
+        }
     }
     return factorize
 }
@@ -236,12 +237,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String {
-    var factor = listOf<Int>()
-    if (isPrime(n)) return "$n"
-    else factor = factorize(n)
-    return factor.joinToString(separator = "*")
-}
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя
@@ -270,14 +266,13 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String {
-    val x = 'a'
     var number = listOf<Int>()
     val result = StringBuilder()
     if (n == 0) return "0"
     number = convert(n, base)
     for (element in number) {
         if (element < 10) result.append(element.toString())
-        else result.append(x + (element % base - 10))
+        else result.append('a' + (element % base - 10))
     }
     return result.toString()
 }
@@ -291,13 +286,12 @@ fun convertToString(n: Int, base: Int): String {
  */
 fun decimal(digits: List<Int>, base: Int): Int {
     var result = 0
-    var x = base
-    if (digits.size == 1) return digits.first()
-    for (i in (digits.size - 2) downTo 0) {
-        result += digits [i] * x
+    var x = 1
+    for (i in (digits.size - 1) downTo 0) {
+        result += digits[i] * x
         x *= base
     }
-    return result + digits.last()
+    return result
 }
 
 /**
@@ -358,7 +352,7 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String {
+fun numFromRussian (x:Int): MutableList<String> {
     val dig = listOf("-", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val num = listOf("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
             "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
@@ -366,45 +360,37 @@ fun russian(n: Int): String {
             "семьдесят", "восемьдесят", "девяносто")
     val hund = listOf("-", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот",
             "семьсот", "восемьсот", "девятьсот")
-    val th = listOf("-", "одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val res = mutableListOf<String>()
-    var part1 = n / 1000
-    val w = part1
-    var part2 = n % 1000
-    if (n in 1..9) return dig[n]
-    if (n in 10..19) return num[n - 10]
-    if (part1 / 100 > 0) {
-        if (part1 % 100 == 0) res.add(hund[part1 / 100])
-        else res.add(hund[part1 / 100])
-        part1 %= 100
+    var part = x
+    if (x in 1..9) return mutableListOf(dig[x])
+    if (x in 10..19) return mutableListOf(num[x - 10])
+    if (part / 100 > 0) {
+        res.add(hund[part / 100])
+        part %= 100
     }
-    if (part1 in 10..19) res.add(num[part1 - 10])
-    if (part1 / 10 > 1) {
-        if (part1 % 10 == 0) res.add(ten[part1 / 10])
-        else res.add(ten[part1 / 10])
-        part1 %= 10
+    if (part / 10 > 1) {
+        res.add(ten[part / 10])
+        part %= 10
     }
-    when {
-        part1 in 5..9 -> res.add(th[part1])
-        part1 in 2..4 -> res.add(th[part1])
-        part1 == 1 -> res.add(th[part1])
+    if (part in 10..19) res.add(num[part - 10])
+    if (part in 1..9) res.add(dig[part])
+    return res
+}
+
+fun russian(n: Int): String {
+    val th = n / 1000
+    val part1 = numFromRussian(n / 1000)
+    val part2 = numFromRussian(n % 1000)
+    for (i in 0 until part1.size) {
+        if (part1[i] == "один") part1[i] = "одна"
+        if (part1[i] == "два") part1[i] = "две"
     }
-    if (w != 0) {
+    if (th != 0) {
         when {
-            (w % 100 in 10..19) || (w % 10 in 5..9) || (w % 10 == 0) -> res.add("тысяч")
-            w % 10 == 1 -> res.add("тысяча")
-            w % 10 in 2..4 -> res.add("тысячи")
+            (th % 100 in 10..19) || (th % 10 in 5..9) || (th % 10 == 0) -> part1.add("тысяч")
+            th % 10 == 1 -> part1.add("тысяча")
+            th % 10 in 2..4 -> part1.add("тысячи")
         }
     }
-    if (part2 / 100 > 0) {
-        res.add(hund[part2 / 100])
-        part2 %= 100
-    }
-    if (part2 / 10 > 1) {
-        res.add(ten[part2 / 10])
-        part2 %= 10
-    }
-    if (part2 in 10..19) res.add(num[part2 - 10])
-    if (part2 in 1..9) res.add(dig[part2])
-    return res.joinToString(separator = " ")
+    return (part1 + part2).joinToString(separator = " ")
 }
