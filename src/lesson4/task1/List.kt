@@ -213,21 +213,23 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    val factorize = mutableListOf<Int>()
-    var factor = 2
     var num = n
-    if (isPrime(n)) return listOf(n)
+    val res = mutableListOf<Int>()
+    var factor = 2
     while (num != 1) {
-        for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
-            if (num % i == 0) {
-                factor = i
-                break
+        if (num % factor != 0) {
+            factor = num
+            for (i in 2..sqrt(num.toDouble()).toInt()) {
+                if (num % i == 0) {
+                    factor = i
+                    break
+                }
             }
         }
-        factorize.add(factor)
-        num /= factor
+    res.add(factor)
+    num /= factor
     }
-    return factorize
+    return res
 }
 
 /**
@@ -383,7 +385,7 @@ fun numFromRussian(x: Int, y: Boolean): MutableList<String> {
 
 fun russian(n: Int): String {
     val th = n / 1000
-    val y = (th % 10) in 1..2
+    val y = ((th % 10) in 1..2) && (th % 100) !in 11..12
     val part1 = numFromRussian(n / 1000, y)
     val part2 = numFromRussian(n % 1000, false)
     if (th != 0) {
