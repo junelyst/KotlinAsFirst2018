@@ -220,10 +220,10 @@ fun factorize(n: Int): List<Int> {
         if (num % factor != 0) {
             factor = num
             for (i in 2..sqrt(num.toDouble()).toInt()) {
-                if (num % i == 0) {
-                    factor = i
-                    break
-                }
+            if (num % i == 0) {
+                factor = i
+                break
+            }
             }
         }
         res.add(factor)
