@@ -216,16 +216,16 @@ fun factorize(n: Int): List<Int> {
     val factorize = mutableListOf<Int>()
     var factor = 2
     var num = n
+    if (isPrime(n)) return listOf(n)
     while (num != 1) {
-        if (num % factor == 0) {
-            factorize.add(factor)
-            num /= factor
+        for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
+            if (num % i == 0) {
+                factor = i
+                break
+            }
         }
-        else factor++
-        if (isPrime(num)) {
-            factorize.add(num)
-            break
-        }
+        factorize.add(factor)
+        num /= factor
     }
     return factorize
 }
@@ -352,7 +352,7 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun numFromRussian (x:Int): MutableList<String> {
+fun numFromRussian(x: Int, y: Boolean): MutableList<String> {
     val dig = listOf("-", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val num = listOf("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
             "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
@@ -362,7 +362,6 @@ fun numFromRussian (x:Int): MutableList<String> {
             "семьсот", "восемьсот", "девятьсот")
     val res = mutableListOf<String>()
     var part = x
-    if (x in 1..9) return mutableListOf(dig[x])
     if (x in 10..19) return mutableListOf(num[x - 10])
     if (part / 100 > 0) {
         res.add(hund[part / 100])
@@ -373,18 +372,20 @@ fun numFromRussian (x:Int): MutableList<String> {
         part %= 10
     }
     if (part in 10..19) res.add(num[part - 10])
+    if (y) {
+        if (part == 1) res.add("одна")
+        else res.add("две")
+        return res
+    }
     if (part in 1..9) res.add(dig[part])
     return res
 }
 
 fun russian(n: Int): String {
     val th = n / 1000
-    val part1 = numFromRussian(n / 1000)
-    val part2 = numFromRussian(n % 1000)
-    for (i in 0 until part1.size) {
-        if (part1[i] == "один") part1[i] = "одна"
-        if (part1[i] == "два") part1[i] = "две"
-    }
+    val y = (th % 10) in 1..2
+    val part1 = numFromRussian(n / 1000, y)
+    val part2 = numFromRussian(n % 1000, false)
     if (th != 0) {
         when {
             (th % 100 in 10..19) || (th % 10 in 5..9) || (th % 10 == 0) -> part1.add("тысяч")
