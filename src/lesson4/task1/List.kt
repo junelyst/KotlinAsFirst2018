@@ -226,8 +226,8 @@ fun factorize(n: Int): List<Int> {
                 }
             }
         }
-    res.add(factor)
-    num /= factor
+        res.add(factor)
+        num /= factor
     }
     return res
 }
