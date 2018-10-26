@@ -4,7 +4,6 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.sqrt
-import lesson3.task1.isPrime
 
 /**
  * Пример
@@ -220,10 +219,10 @@ fun factorize(n: Int): List<Int> {
         if (num % factor != 0) {
             factor = num
             for (i in 2..sqrt(num.toDouble()).toInt()) {
-            if (num % i == 0) {
-                factor = i
-                break
-            }
+                if (num % i == 0) {
+                    factor = i
+                    break
+                }
             }
         }
         res.add(factor)
@@ -335,7 +334,8 @@ fun roman(n: Int): String {
     var count = 0
     val res = StringBuilder()
     val numbers = mapOf(1000 to "M", 900 to "CM", 500 to "D", 400 to "CD",
-100 to "C", 90 to "XC", 50 to "L", 40 to "XL", 10 to "X", 9 to "IX", 5 to "V", 4 to "IV", 1 to "I")
+            100 to "C", 90 to "XC", 50 to "L", 40 to "XL", 10 to "X", 9 to "IX", 5 to "V",
+            4 to "IV", 1 to "I")
     for ((key, value) in numbers) {
         count = num / key
         num %= key
