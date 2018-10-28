@@ -207,8 +207,8 @@ class Tests {
         assertEquals(
                 "42",
                 findCheapestStuff(
-                        mapOf("12" to ("печенье" to 25.0), "56" to ("печенье" to 20.0), "42" to ("печенье" to 20.0)),
-                        "печенье"
+                        mapOf("12" to ("" to 20.0), "56" to ("печенье" to 20.0), "42" to ("" to 10.0)),
+                        ""
                 )
         )
     }
@@ -288,6 +288,7 @@ class Tests {
         assertFalse(canBuildFrom(emptyList(), "foo"))
         assertTrue(canBuildFrom(listOf('a', 'b', 'o'), "baobab"))
         assertFalse(canBuildFrom(listOf('a', 'm', 'r'), "Marat"))
+        assertTrue(canBuildFrom(listOf('彀', 's', '&', 'I', 'I', 'W'), "S"))
     }
 
     @Test

@@ -219,7 +219,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     val price = mutableListOf<Double>()
     for ((name, type) in stuff) {
-        if (type.first == kind) price.add(type.second)
+        if (type.first.equals(kind)) price.add(type.second)
     }
     var res = ""
     for ((name, type) in stuff) {
@@ -307,7 +307,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val res = mutableListOf<String>()
     for (i in 0 until minOf(a.size, b.size)) {
-        if (a[i] in b) res.add(a[i])
+        if ((a[i] in b) && (a[i] !in res)) res.add(a[i])
     }
     return res
 }
@@ -323,7 +323,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     for (i in 0 until word.length) {
-        if (word[i] !in chars) return false
+        if (word[i].toLowerCase() !in chars.toString().toLowerCase()) return false
     }
     return true
 }
