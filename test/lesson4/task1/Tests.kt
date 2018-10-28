@@ -156,12 +156,15 @@ class Tests {
     @Test
     @Tag("Normal")
     fun factorize() {
+        assertEquals(listOf(2, 3, 3, 19), factorize(342))
         assertEquals(listOf(2), factorize(2))
         assertEquals(listOf(19), factorize(19))
         assertEquals(listOf(3, 5, 5), factorize(75))
         assertEquals(listOf(2, 3, 3, 19), factorize(342))
         assertEquals(listOf(2, 2, 5, 5), factorize(100))
         assertEquals(listOf(2, 2, 2, 3, 41047), factorize(985128))
+        assertEquals(listOf(5, 13, 19), factorize(1235))
+        assertEquals(listOf(2, 2, 139), factorize(556))
     }
 
     @Test
