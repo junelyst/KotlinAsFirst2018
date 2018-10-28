@@ -306,8 +306,9 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val res = mutableListOf<String>()
-    for (i in 0 until minOf(a.size, b.size)) {
+    for (i in 0 until maxOf(a.size, b.size)) {
         if ((a[i] in b) && (a[i] !in res)) res.add(a[i])
+        if (i == minOf(a.size, b.size) - 1) break
     }
     return res
 }

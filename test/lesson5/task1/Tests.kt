@@ -130,6 +130,13 @@ class Tests {
                         mapOf("key" to "value", "Emergency" to "911", "Police" to "02")
                 )
         )
+        assertEquals(
+                mapOf("Emergency" to "112, 911", "Police" to "02", "x" to "y", "c" to "lk"),
+                mergePhoneBooks(
+                        mapOf("Emergency" to "112"),
+                        mapOf("Emergency" to "911", "Police" to "02", "x" to "y", "c" to "lk")
+                )
+        )
     }
 
     @Test
