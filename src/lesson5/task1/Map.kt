@@ -102,9 +102,9 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
             if ((nameA == nameB) && (phoneA != phoneB)) {
                 phoneRes.append(phoneA).append(", ").append(phoneB)
                 res += nameA to phoneRes.toString()
-            }
-            else if (nameA in res) res += nameB to phoneB
-                else res += nameA to phoneA
+                }
+            if (nameA !in res) res += nameA to phoneA
+            if (nameB !in res) res += nameB to phoneB
         }
     }
     if (res.isEmpty()) {
@@ -221,10 +221,12 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
     for ((name, type) in stuff) {
         if (type.first == kind) price.add(type.second)
     }
+    var res = ""
     for ((name, type) in stuff) {
-        if (type.second == price.min()) return name
+        if (type.second == price.min()) res = name
     }
-    return null
+    return if (res == "") null
+    else res
 }
 
 /**
@@ -290,11 +292,9 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
     for ((keyB, valueB) in b) {
-        for ((keyA, valueA) in a) {
-            if ((keyB == keyA) && (valueB == valueA)) {
-                a.remove(keyB)
-                if (a.size <= 1) break
-            }
+        if ((keyB in a) && (valueB == a[keyB])) {
+            a.remove(keyB)
+            if (a.size <= 1) break
         }
     }
 }
@@ -306,7 +306,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val res = mutableListOf<String>()
-    for (i in 0 until maxOf(a.size, b.size)) {
+    for (i in 0 until minOf(a.size, b.size)) {
         if (a[i] in b) res.add(a[i])
     }
     return res

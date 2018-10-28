@@ -124,10 +124,10 @@ class Tests {
                 )
         )
         assertEquals(
-                mapOf("Emergency" to "112, 911", "Fire department" to "01", "Police" to "02"),
+                mapOf("key" to "value", "Emergency" to "112, 911", "Fire department" to "01", "Police" to "02"),
                 mergePhoneBooks(
                         mapOf("Emergency" to "112", "Fire department" to "01"),
-                        mapOf("Emergency" to "911", "Police" to "02")
+                        mapOf("key" to "value", "Emergency" to "911", "Police" to "02")
                 )
         )
     }
@@ -182,6 +182,10 @@ class Tests {
                 averageStockPrice(listOf("MSFT" to 200.0, "MSFT" to 150.0, "NFLX" to 40.0, "NFLX" to 50.0,
                         "MSFT" to 250.0))
         )
+        assertEquals(
+                mapOf("MSFT" to 0.0, "NFLX" to 45.0),
+                averageStockPrice(listOf("MSFT" to 200.0, "MSFT" to -200.0, "NFLX" to 40.0, "NFLX" to 50.0))
+        )
     }
 
     @Test
@@ -197,6 +201,13 @@ class Tests {
                 "Мария",
                 findCheapestStuff(
                         mapOf("Мария" to ("печенье" to 20.0), "Орео" to ("печенье" to 100.0)),
+                        "печенье"
+                )
+        )
+        assertEquals(
+                "42",
+                findCheapestStuff(
+                        mapOf("12" to ("печенье" to 25.0), "56" to ("печенье" to 20.0), "42" to ("печенье" to 20.0)),
                         "печенье"
                 )
         )
@@ -263,6 +274,11 @@ class Tests {
         assertEquals(
                 emptyList<String>(),
                 whoAreInBoth(listOf("Marat", "Mikhail"), listOf("Sveta", "Kirill"))
+        )
+        assertEquals(
+                listOf("JC||}wdQ"),
+                whoAreInBoth(listOf("JC||}wdQ"), listOf("JC||}wdQ", "JC||}wdQ", "JC||}wdQ", "JC||}wdQ",
+                        "JC||}wdQ", "JC||}wdQ"))
         )
     }
 
