@@ -161,6 +161,7 @@ class Tests {
         assertEquals(listOf(3, 5, 5), factorize(75))
         assertEquals(listOf(2, 3, 3, 19), factorize(342))
         assertEquals(listOf(2, 2, 5, 5), factorize(100))
+        assertEquals(listOf(2, 2, 2, 3, 41047), factorize(985128))
     }
 
     @Test
@@ -232,6 +233,7 @@ class Tests {
     @Test
     @Tag("Impossible")
     fun russian() {
+        assertEquals("пятьсот одиннадцать тысяч шестнадцать", russian(511016))
         assertEquals("двести четырнадцать тысяч девятьсот пятьдесят девять", russian(214959))
         assertEquals("девятнадцать", russian(19))
         assertEquals("триста семьдесят пять", russian(375))
@@ -245,5 +247,6 @@ class Tests {
         assertEquals("двести пятьдесят три тысячи сто одиннадцать", russian(253111))
         assertEquals("четыреста восемьдесят пять тысяч семьсот девяносто шесть", russian(485796))
         assertEquals("девятьсот пятьдесят тысяч двести семьдесят шесть", russian(950276))
+        assertEquals("девятьсот двадцать одна тысяча двести семьдесят шесть", russian(921276))
     }
 }

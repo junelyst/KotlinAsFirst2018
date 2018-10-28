@@ -155,6 +155,7 @@ class Tests {
     fun containsIn() {
         assertTrue(containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")))
         assertFalse(containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")))
+        assertFalse(containsIn(mapOf("a" to "z", "b" to "y"), mapOf("a" to "y", "b" to "z")))
     }
 
     @Test
@@ -175,6 +176,11 @@ class Tests {
         assertEquals(
                 mapOf("MSFT" to 150.0, "NFLX" to 45.0),
                 averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0, "NFLX" to 50.0))
+        )
+        assertEquals(
+                mapOf("MSFT" to 200.0, "NFLX" to 45.0),
+                averageStockPrice(listOf("MSFT" to 200.0, "MSFT" to 150.0, "NFLX" to 40.0, "NFLX" to 50.0,
+                        "MSFT" to 250.0))
         )
     }
 
@@ -280,8 +286,16 @@ class Tests {
                 extractRepeats(listOf("a", "b", "a"))
         )
         assertEquals(
+                mapOf("a" to 2),
+                extractRepeats(listOf("a", "a"))
+        )
+        assertEquals(
                 emptyMap<String, Int>(),
                 extractRepeats(listOf("a", "b", "c"))
+        )
+        assertEquals(
+                mapOf("a" to 2, "n" to 3),
+                extractRepeats(listOf("a", "b", "n", "n", "c", "a", "n"))
         )
     }
 
@@ -291,6 +305,7 @@ class Tests {
         assertFalse(hasAnagrams(emptyList()))
         assertTrue(hasAnagrams(listOf("рот", "свет", "тор")))
         assertFalse(hasAnagrams(listOf("рот", "свет", "код", "дверь")))
+        assertFalse(hasAnagrams(listOf("роза", "свет", "код", "азора")))
     }
 
     @Test
@@ -308,11 +323,23 @@ class Tests {
                 Pair(-1, -1),
                 findSumOfTwo(listOf(1, 2, 3), 6)
         )
+        assertEquals(
+                Pair(0, 3),
+                findSumOfTwo(listOf(0, 0, 3, 10), 10)
+        )
     }
 
     @Test
     @Tag("Impossible")
     fun bagPacking() {
+        assertEquals(
+                setOf("Кубок", "Трофей", "Слиток"),
+                bagPacking(
+                        mapOf("Кубок" to (200 to 1700), "Слиток" to (250 to 1500), "Трофей" to (140 to 1800),
+                                "Кристалл" to (350 to 2000), "Приз" to (200 to 1900)),
+                        600
+                )
+        )
         assertEquals(
                 setOf("Кубок"),
                 bagPacking(
@@ -324,6 +351,14 @@ class Tests {
                 emptySet<String>(),
                 bagPacking(
                         mapOf("Кубок" to (500 to 2000), "Слиток" to (1000 to 5000)),
+                        450
+                )
+        )
+        assertEquals(
+                setOf("Кубок", "Трофей"),
+                bagPacking(
+                        mapOf("Кубок" to (400 to 2000), "Слиток" to (1000 to 5000), "Трофей" to (50 to 3500),
+                        "Кристалл" to (50 to 3000)),
                         450
                 )
         )
