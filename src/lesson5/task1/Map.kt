@@ -219,7 +219,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     val price = mutableListOf<Double>()
     for ((name, type) in stuff) {
-        if (type.first.equals(kind)) price.add(type.second)
+        if (type.first == kind) price.add(type.second)
     }
     var res = ""
     for ((name, type) in stuff) {
@@ -307,6 +307,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
+    if (a.isEmpty() || b.isEmpty()) return listOf()
     val res = mutableListOf<String>()
     for (i in 0 until maxOf(a.size, b.size)) {
         if ((a[i] in b) && (a[i] !in res)) res.add(a[i])
@@ -326,7 +327,11 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     for (i in 0 until word.length) {
-        if (word[i] !in chars) return false
+        if ((word[i] in 'a'..'z') || (word[i] in 'A'..'Z') || (word[i] in 'а'..'я') || (word[i] in 'А'..'Я')) {
+            if ((word[i].toLowerCase() !in chars) && (word[i].toUpperCase() !in chars))
+                return false
+        }
+        else if (word[i] !in chars) return false
     }
     return true
 }
