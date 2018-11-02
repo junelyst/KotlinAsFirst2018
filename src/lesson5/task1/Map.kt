@@ -286,7 +286,6 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val res = mutableListOf<String>()
     for (i in 0 until a.size) {
         if ((a[i] in b.toSet()) && (a[i] !in res)) res.add(a[i])
-        if (i == minOf(a.size, b.size) - 1) break
     }
     return res
 }
