@@ -212,21 +212,24 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    val factorize = mutableListOf<Int>()
-    var factor = 2
     var num = n
+    val res = mutableListOf<Int>()
+    var factor = 2
     while (num != 1) {
-        if (num % factor == 0) {
-            factorize.add(factor)
-            num /= factor
+        if (num % factor != 0) {
+            val f = factor
+            factor = num
+            for (i in f..sqrt(num.toDouble()).toInt()) { // проверка начинается с уже найденного делителя
+                if (num % i == 0) {
+                    factor = i
+                    break
+                }
+            }
         }
-        else factor++
-        if ((num <= sqrt(n.toDouble()).toInt()) && (num != 1)) {
-            factorize.add(num)
-            break
-        }
+        res.add(factor)
+        num /= factor
     }
-    return factorize
+    return res
 }
 
 /**
@@ -371,10 +374,16 @@ fun numFromRussian(x: Int, y: Boolean): MutableList<String> {
         res.add(ten[part / 10])
         part %= 10
     }
-    if (part in 10..19) res.add(num[part - 10])
+    if (part in 10..19) {
+        res.add(num[part - 10])
+        return res
+    }
     if (y) {
-        if (part == 1) res.add("одна")
-        else res.add("две")
+        when (part) {
+            1 -> res.add("одна")
+            2 -> res.add ("две")
+            in (3..9) -> res.add(dig[part])
+        }
         return res
     }
     if (part in 1..9) res.add(dig[part])
@@ -383,8 +392,7 @@ fun numFromRussian(x: Int, y: Boolean): MutableList<String> {
 
 fun russian(n: Int): String {
     val th = n / 1000
-    val y = ((th % 10) in 1..2) && (th % 100) !in 11..12
-    val part1 = numFromRussian(n / 1000, y)
+    val part1 = numFromRussian(n / 1000, n / 1000 > 0)
     val part2 = numFromRussian(n % 1000, false)
     if (th != 0) {
         when {
