@@ -131,9 +131,9 @@ class Tests {
                 )
         )
         assertEquals(
-                mapOf("Emergency" to "112, 911", "Police" to "02", "x" to "y", "c" to "lk"),
+                mapOf("Emergency" to "112, 911", "Police" to "02", "x" to "mk, y", "c" to "lk"),
                 mergePhoneBooks(
-                        mapOf("Emergency" to "112"),
+                        mapOf("Emergency" to "112", "x" to "mk"),
                         mapOf("Emergency" to "911", "Police" to "02", "x" to "y", "c" to "lk")
                 )
         )
@@ -152,7 +152,7 @@ class Tests {
                 buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
         )
         assertEquals(
-                mapOf(3 to listOf("Семён", "Михаил", "Марат")),
+                mapOf(3 to listOf("Марат", "Семён", "Михаил")),
                 buildGrades(mapOf("Марат" to 3, "Семён" to 3, "Михаил" to 3))
         )
     }
@@ -198,6 +198,13 @@ class Tests {
     @Test
     @Tag("Normal")
     fun findCheapestStuff() {
+        assertEquals(
+                "",
+                findCheapestStuff(
+                        mapOf("12" to ("" to 20.0), "56" to ("печенье" to 20.0), "" to ("45" to 10.0)),
+                        "45"
+                )
+        )
         assertNull(
                 findCheapestStuff(
                         mapOf("Мария" to ("печенье" to 20.0), "Орео" to ("печенье" to 100.0)),
@@ -209,13 +216,6 @@ class Tests {
                 findCheapestStuff(
                         mapOf("Мария" to ("печенье" to 20.0), "Орео" to ("печенье" to 100.0)),
                         "печенье"
-                )
-        )
-        assertEquals(
-                "42",
-                findCheapestStuff(
-                        mapOf("12" to ("" to 20.0), "56" to ("печенье" to 20.0), "42" to ("" to 10.0)),
-                        ""
                 )
         )
     }

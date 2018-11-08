@@ -96,13 +96,13 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val res = mutableMapOf<String, String>()
-    val phoneRes = StringBuilder()
+    val phoneRes = listOf<String>()
     for ((nameA, phoneA) in mapA) {
-        if ((nameA in mapB) && (phoneA != mapB[nameA])) {
-            phoneRes.append(phoneA).append(", ").append(mapB[nameA])
-            res += nameA to phoneRes.toString()
-            }
-        if (nameA !in res) res += nameA to phoneA
+        val x = mapB[nameA]
+        if ((nameA in mapB) && (phoneA != x)) {
+            res += nameA to (phoneRes + phoneA + x).joinToString(separator = ", ")
+        }
+        else res += nameA to phoneA
     }
     for ((nameB, phoneB) in mapB) {
         if (nameB !in res) res += nameB to phoneB
@@ -123,10 +123,7 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val res = mutableMapOf<Int, MutableList<String>>()
     for ((name, value) in grades) {
-        if (value in res) res[value]!!.plusAssign(name)
-        else {
-            res += value to mutableListOf(name)
-        }
+        res[value] = (res[value]?.plus(name))?.toMutableList() ?: mutableListOf(name)
     }
     return res
 }
@@ -143,7 +140,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for ((keyA, valueA) in a) {
-        if ((keyA !in b) || (valueA != b[keyA])) return false
+        if (valueA != b[keyA]) return false
     }
     return true
 }
@@ -161,14 +158,14 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val num = mutableMapOf<String, Pair<Double, Int>>()
     val res = mutableMapOf<String, Double>()
-    for (i in 0 until stockPrices.size) {
-        if (stockPrices[i].first !in num) {
-            num += stockPrices[i].first to (stockPrices[i].second to 1)
-
+    for (element in stockPrices) {
+        if (element.first !in num) {
+            num += element.first to (element.second to 1)
         }
         else {
-            val name = stockPrices[i].first
-            num[name] = num[name]!!.first + stockPrices[i].second to num[name]!!.second.plus(1)
+            val name = element.first
+            val value = num[name]
+            num[name] = value!!.first + element.second to value!!.second.plus(1)
         }
     }
     for ((name, info) in num) {
@@ -193,8 +190,8 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    var min = Double.MAX_VALUE
-    var res:String? = null
+    var min = Double.POSITIVE_INFINITY
+    var res: String? = null
     for ((name, type) in stuff) {
         if ((type.first == kind) && (type.second < min)) {
             res = name
@@ -241,11 +238,11 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         res += person to people.toMutableSet()
     }
     for (element in setOfNames) {
-        for ((person, people) in friends) {
-            if (element !in res) res += element to mutableSetOf()
-            if ((res[person]!!.contains(element)) && (person != element)) {
-                val setFr = (res[person]!!.union(res[element]!!.toMutableSet()) - person).toMutableSet()
-                res[person] = setFr
+        if (element !in res) res += element to mutableSetOf()
+        for ((person, people) in res) {
+            if (((person != element) && res[person]!!.contains(element))) {
+                val setFr = res[person]!!.union(res[element]!!.toMutableSet()) - person
+                res[person] = setFr.toMutableSet()
             }
         }
     }
@@ -281,12 +278,8 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    if (a.isEmpty() || b.isEmpty()) return listOf()
-    val res = mutableListOf<String>()
-    for (i in 0 until a.size) {
-        if ((a[i] in b.toSet()) && (a[i] !in res)) res.add(a[i])
-    }
-    return res
+    val res = a.intersect(b)
+    return res.toList()
 }
 
 /**
@@ -299,9 +292,9 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    val ch = chars.joinToString().toLowerCase().toSet()
-    for (i in 0 until word.length) {
-        if (word[i].toLowerCase() !in ch) return false
+    val ch = chars.joinToString(separator = "").toLowerCase().toSet()
+    for (element in word) {
+        if (element.toLowerCase() !in ch) return false
     }
     return true
 }
@@ -321,9 +314,9 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
 fun extractRepeats(list: List<String>): Map<String, Int> {
     if (list.isEmpty()) return mapOf()
     val res = mutableMapOf<String, Int>()
-    for (i in 0 until list.size) {
-        if (list[i] !in res) res += list[i] to 1
-        else res[list[i]] = res[list[i]]!!.plus(1)
+    for (element in list) {
+        if (element !in res) res += element to 1
+        else res[element] = res[element]!!.plus(1)
     }
     return res.filterValues { it != 1 }
 }
@@ -366,11 +359,9 @@ fun hasAnagrams(words: List<String>): Boolean {
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     for (i in 0 until list.size) {
-        var num = list[i]
-        for (k in i + 1 until list.size) {
-            if ((num + list[k] == number) && (k != i)) return i to k
-            num = list[i]
-        }
+        val num = number - list[i]
+        if ((num in list) && (list.indexOf(num) != i))
+            return i to list.indexOf(num)
     }
     return -1 to -1
 }

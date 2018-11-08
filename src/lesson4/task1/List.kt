@@ -381,7 +381,7 @@ fun numFromRussian(x: Int, y: Boolean): MutableList<String> {
     if (y) {
         when (part) {
             1 -> res.add("одна")
-            2 -> res.add ("две")
+            2 -> res.add("две")
             in (3..9) -> res.add(dig[part])
         }
         return res
@@ -392,7 +392,7 @@ fun numFromRussian(x: Int, y: Boolean): MutableList<String> {
 
 fun russian(n: Int): String {
     val th = n / 1000
-    val part1 = numFromRussian(n / 1000, n / 1000 > 0)
+    val part1 = numFromRussian(n / 1000, true)
     val part2 = numFromRussian(n % 1000, false)
     if (th != 0) {
         when {
