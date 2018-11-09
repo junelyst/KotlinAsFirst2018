@@ -77,15 +77,19 @@ fun dateStrToDigit(str: String): String {
             "августа", "сентября", "октября", "ноября", "декабря")
     val date = str.split(" ")
     if (date.size != 3) return ""
-    val day = date[0].toInt()
-    var month = -1
-    val year = date[2].toInt()
-    for (i in 0 until months.size) {
-        if (date[1] == months[i]) month = i
+    try {
+        val day = date[0].toInt()
+        var month = -1
+        val year = date[2].toInt()
+        for (i in 0 until months.size) {
+            if (date[1] == months[i]) month = i
+        }
+        if ((month == -1) || (day > daysInMonth(month, year)) || (day < 1) || (year < 0)) return ""
+        return String.format("%02d.%02d.%d", day, month, year)
     }
-    if ((month == -1) || (day > daysInMonth(month, year)) || (day < 1) || (year < 0)) return ""
-
-    return String.format("%02d.%02d.%d", day, month, year)
+    catch (e: NumberFormatException) {
+        return ""
+    }
 }
 
 /**
@@ -306,7 +310,7 @@ fun fromRoman(roman: String): Int {
             else -> return -1
         }
     }
-    if ((str[str.size - 1] in num) && (str[str.size - 1] + str[str.size - 2] !in num))
+    if ((str[str.size - 1] in num) && (str[str.size - 2] + str[str.size - 1] !in num))
         res += num[str[str.size - 1]]!!
     return res
 }
@@ -366,7 +370,6 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             "[" -> if (res[i] == 0) {
                 var bkt1 = 0
                 while (true) {
-                    val see = order[k]
                     k++
                     if (order[k] == "[") bkt1++
                     if ((order[k] == "]") && (bkt1 == 0)) break
@@ -376,7 +379,6 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             "]" -> if (res[i] != 0) {
                 var bkt2 = 0
                 while (true) {
-                    val see = order[k]
                     k--
                     if (order[k] == "]") bkt2++
                     if ((order[k] == "[") && (bkt2 == 0)) break
@@ -387,7 +389,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         }
         k++
         if (k == order.size) break
-        if (i >= cells) throw IllegalStateException()
+        if ((i >= cells) || (i < 0)) throw IllegalStateException()
         count++
     }
 

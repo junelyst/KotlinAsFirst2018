@@ -42,6 +42,7 @@ class Tests {
         assertEquals("", dateStrToDigit("32 сентября 2011"))
         assertEquals("", dateStrToDigit("29 февраля 1993"))
         assertEquals("29.02.0", dateStrToDigit("29 февраля 0"))
+        assertEquals("", dateStrToDigit("^chB(?Y[nLa8o ;US#A6^n,R[8k}]UH* C2m>93tptFLp"))
     }
 
     @Test
@@ -55,6 +56,9 @@ class Tests {
         assertEquals("", dateDigitToStr("32.09.2011"))
         assertEquals("", dateDigitToStr("29.02.1993"))
         assertEquals("29 февраля 0", dateDigitToStr("29.02.0"))
+        assertEquals("", dateDigitToStr("4LXmg'4kf:\\\\YhE\\\"?s=%HX Yd#&* @\\\"H>v>gy^A SY+eR{]uzr_kuRu1" +
+                "*\\\"Isq{HQoLAi)?`69p-[!a0\\\\jxZQBUZah9Dg 2B}d>1/9.P4s{')d[!NiHyykMw8i>@Gg:^9\\\"ji+ucI8/pIX}}.>" +
+                "&]w~_ry+3uyN\\n*_e}W"))
     }
 
     @Test
@@ -128,6 +132,7 @@ class Tests {
         assertEquals(49, fromRoman("XLIX"))
         assertEquals(-1, fromRoman("Z"))
         assertEquals(-1, fromRoman(""))
+        assertEquals(17011, fromRoman("MMMMMMMMMMMMMMMMMXI"))
     }
 
     @Test
@@ -149,5 +154,6 @@ class Tests {
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(10, "===", 3) }
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(10, "+>+>[+>", 3) }
         assertThrows(IllegalStateException::class.java) { computeDeviceCells(20, ">>>>>>>>>>>>>", 12) }
+        assertThrows(IllegalStateException::class.java) { computeDeviceCells(1, "< - <+-<+<-+++<+>+ -++<+---", 120) }
     }
 }
