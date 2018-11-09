@@ -355,13 +355,21 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val order = commands.split(Regex("")).filter { (it != "") }
     val res = mutableListOf<Int>()
     if (order.count { it == "]" } != order.count { it == "[" }) throw IllegalArgumentException()
+    var num = 0
+    for (element in order) {
+        when {
+            element == "[" -> num++
+            (element == "]") && (num == 0) -> throw IllegalArgumentException()
+            (element == "]") && (num > 0) -> num--
+        }
+    }
     for (j in 0 until cells) res.add(0)
     if (order.isEmpty()) return res
     var i = cells / 2   // ячейка, где указатель сейчас
     var count = 0           // количество команд
     var k = 0             // переключение между командами
     while (count < limit) {
-        when (order[k]){
+        when (order[k]) {
             ">" -> i++
             "<" -> i--
             "+" -> res[i]++
