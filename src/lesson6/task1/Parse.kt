@@ -388,8 +388,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             else -> throw IllegalArgumentException()
         }
         k++
-        if (k == order.size) break
         if ((i >= cells) || (i < 0)) throw IllegalStateException()
+        if (k == order.size) break
         count++
     }
 
