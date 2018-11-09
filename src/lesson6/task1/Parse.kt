@@ -83,7 +83,7 @@ fun dateStrToDigit(str: String): String {
     for (i in 0 until months.size) {
         if (date[1] == months[i]) month = i
     }
-    if ((month == -1) || (day > daysInMonth(month, year)) || (day < 1) || (year < 1)) return ""
+    if ((month == -1) || (day > daysInMonth(month, year)) || (day < 1) || (year < 0)) return ""
 
     return String.format("%02d.%02d.%d", day, month, year)
 }
@@ -110,7 +110,7 @@ fun dateDigitToStr(digital: String): String {
         for (i in 0 until months.size) {
             if (i == date[1].toInt()) month = months[i]
         }
-        if ((month.isEmpty()) || (day > daysInMonth(date[1].toInt(), year)) || (day < 1) || (year < 1)) return ""
+        if ((month.isEmpty()) || (day > daysInMonth(date[1].toInt(), year)) || (day < 1) || (year < 0)) return ""
         return String.format("%d %s %d", day, month, year)
     }
     catch (e: NumberFormatException) {
@@ -131,7 +131,8 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    val number = phone.split("-", " ", "(", ")")
+    val number = phone.split("-", " ", "(", ")").filter { it != "" }
+    if (number.isEmpty()) return ""
     val res = StringBuilder()
     for (part in number) {
         res.append(part)
@@ -283,10 +284,11 @@ fun mostExpensive(description: String): String {
  */
 fun fromRoman(roman: String): Int {
     var res = 0
-    var str = roman.split("").filter { it != "" }
+    val str = roman.split("").filter { it != "" }
     val num = mapOf("M" to 1000, "CM" to 900, "D" to 500, "CD" to 400,
             "C" to 100, "XC" to 90, "L" to 50, "XL" to 40, "X" to 10, "IX" to 9, "V" to 5,
             "IV" to 4, "I" to 1)
+    if (roman.isEmpty()) return -1
     if ((str[0] in num) && (str.size < 2)) return num[str[0]]!!
     if (str[0] !in num) return -1
     var i = 0
@@ -350,6 +352,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val res = mutableListOf<Int>()
     if (order.count { it == "]" } != order.count { it == "[" }) throw IllegalArgumentException()
     for (j in 0 until cells) res.add(0)
+    if (order.isEmpty()) return res
     var i = cells / 2   // ячейка, где указатель сейчас
     var count = 0           // количество команд
     var k = 0             // переключение между командами

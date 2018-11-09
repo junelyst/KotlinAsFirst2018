@@ -41,6 +41,7 @@ class Tests {
         assertEquals("03.04.2011", dateStrToDigit("3 апреля 2011"))
         assertEquals("", dateStrToDigit("32 сентября 2011"))
         assertEquals("", dateStrToDigit("29 февраля 1993"))
+        assertEquals("29.02.0", dateStrToDigit("29 февраля 0"))
     }
 
     @Test
@@ -51,8 +52,9 @@ class Tests {
         assertEquals("", dateDigitToStr("28.00.2000"))
         assertEquals("3 апреля 2011", dateDigitToStr("03.04.2011"))
         assertEquals("", dateDigitToStr("ab.cd.ef"))
-        assertEquals("", dateStrToDigit("32.09.2011"))
-        assertEquals("", dateStrToDigit("29.02.1993"))
+        assertEquals("", dateDigitToStr("32.09.2011"))
+        assertEquals("", dateDigitToStr("29.02.1993"))
+        assertEquals("29 февраля 0", dateDigitToStr("29.02.0"))
     }
 
     @Test
@@ -64,6 +66,7 @@ class Tests {
         assertEquals("+12345", flattenPhoneNumber("+12 (3) 4-5"))
         assertEquals("", flattenPhoneNumber("134_+874"))
         assertEquals("", flattenPhoneNumber("a134 874"))
+        assertEquals("", flattenPhoneNumber(" "))
     }
 
     @Test
@@ -124,11 +127,13 @@ class Tests {
         assertEquals(694, fromRoman("DCXCIV"))
         assertEquals(49, fromRoman("XLIX"))
         assertEquals(-1, fromRoman("Z"))
+        assertEquals(-1, fromRoman(""))
     }
 
     @Test
     @Tag("Impossible")
     fun computeDeviceCells() {
+        assertEquals(listOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0), computeDeviceCells(10, "", 17))
         assertEquals(listOf(1, 1, 1, 0, 0, -1, 0, 0, 0, 0), computeDeviceCells(10, "- <<<<< +[>+]", 17))
         assertEquals(listOf(0, 6, 5, 4, 3, 2, 1, 0, -1, -1, -2),
                 computeDeviceCells(11, "<<<<< + >>>>>>>>>> --[<-] >+[>+] >++[--< <[<] >+[>+] >++]", 256))
