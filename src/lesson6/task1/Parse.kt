@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_PARAMETER", "ConvertCallChainIntoSequence")
 
 package lesson6.task1
+import lesson2.task2.daysInMonth
 
 /**
  * Пример
@@ -71,7 +72,21 @@ fun main(args: Array<String>) {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val months = listOf("", "января", "февраля", "марта", "апреля", "мая", "июня", "июля",
+            "августа", "сентября", "октября", "ноября", "декабря")
+    val date = str.split(" ")
+    if (date.size != 3) return ""
+    val day = date[0].toInt()
+    var month = -1
+    val year = date[2].toInt()
+    for (i in 0 until months.size) {
+        if (date[1] == months[i]) month = i
+    }
+    if ((month == -1) || (day > daysInMonth(month, year)) || (day < 1) || (year < 1)) return ""
+
+    return String.format("%02d.%02d.%d", day, month, year)
+}
 
 /**
  * Средняя
@@ -83,7 +98,25 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val months = listOf("", "января", "февраля", "марта", "апреля", "мая", "июня", "июля",
+            "августа", "сентября", "октября", "ноября", "декабря")
+    val date = digital.split(".")
+    try {
+        val day = date[0].toInt()
+        val year = date[2].toInt()
+        if (date.size != 3) return ""
+        var month = String()
+        for (i in 0 until months.size) {
+            if (i == date[1].toInt()) month = months[i]
+        }
+        if ((month.isEmpty()) || (day > daysInMonth(date[1].toInt(), year)) || (day < 1) || (year < 1)) return ""
+        return String.format("%d %s %d", day, month, year)
+    }
+    catch (e: NumberFormatException) {
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -97,7 +130,18 @@ fun dateDigitToStr(digital: String): String = TODO()
  * Все символы в номере, кроме цифр, пробелов и +-(), считать недопустимыми.
  * При неверном формате вернуть пустую строку
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val number = phone.split("-", " ", "(", ")")
+    val res = StringBuilder()
+    for (part in number) {
+        res.append(part)
+    }
+    if ((res[0] != '+') && (res[0] !in '0'..'9')) return ""
+    for (i in 1 until res.length) {
+        if (res[i] !in '0'..'9') return ""
+    }
+    return res.toString()
+}
 
 /**
  * Средняя
@@ -109,7 +153,19 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    val str = jumps.split("-", "%", " ").filter { it != "" }
+    var max = -1
+    try {
+        for (part in str) {
+            if (part.toInt() > max) max = part.toInt()
+        }
+    }
+    catch (e: NumberFormatException) {
+        return -1
+    }
+    return max
+}
 
 /**
  * Сложная
@@ -121,7 +177,19 @@ fun bestLongJump(jumps: String): Int = TODO()
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val str = jumps.split(" ")
+    var max = -1
+    try {
+        for (i in 0 until str.size - 1 step 2) {
+            if (('+' in str[i + 1]) && (str[i].toInt() > max)) max = str[i].toInt()
+        }
+    }
+    catch (e: NumberFormatException) {
+        return -1
+    }
+    return max
+ }
 
 /**
  * Сложная
@@ -132,7 +200,27 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val exp = expression.split(" ")
+    try {
+        for (i in 0 until exp[0].length) {
+            if (exp[0][0] !in '0'..'9') throw IllegalArgumentException()
+        }
+        var res = exp[0].toInt()
+        for (i in 0 until exp.size - 1 step 2) {
+            when {
+                exp[i + 2].toInt() < 0 -> throw IllegalArgumentException()
+                (exp[i + 1] == "+") -> res += exp[i + 2].toInt()
+                (exp[i + 1] == "-") -> res -= exp[i + 2].toInt()
+                else -> throw IllegalArgumentException()
+            }
+        }
+        return res
+    }
+    catch (e: NumberFormatException) {
+        throw IllegalArgumentException()
+    }
+}
 
 /**
  * Сложная
@@ -143,7 +231,15 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val words = str.split(" ")
+    var count = -1
+    for (i in 0 until words.size - 1) {
+        if (words[i].toLowerCase() == words[i + 1].toLowerCase()) return count + 1
+        count += words[i].length + 1
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -156,7 +252,23 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val prices = description.split(" ", "; ")
+    var max = -1.0
+    var name = String()
+    try {
+        for (i in 0 until prices.size - 1 step 2) {
+            if (prices[i + 1].toDouble() > max) {
+                max = prices[i + 1].toDouble()
+                name = prices[i]
+            }
+        }
+    }
+    catch (e: NumberFormatException) {
+        return ""
+    }
+    return name
+}
 
 /**
  * Сложная
@@ -169,7 +281,33 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    var res = 0
+    var str = roman.split("").filter { it != "" }
+    val num = mapOf("M" to 1000, "CM" to 900, "D" to 500, "CD" to 400,
+            "C" to 100, "XC" to 90, "L" to 50, "XL" to 40, "X" to 10, "IX" to 9, "V" to 5,
+            "IV" to 4, "I" to 1)
+    if ((str[0] in num) && (str.size < 2)) return num[str[0]]!!
+    if (str[0] !in num) return -1
+    var i = 0
+    while (i != str.size - 1) {
+        when {
+            str[i] + str[i + 1] in num -> {
+                res += num[str[i] + str[i + 1]]!!
+                if (i + 2 <= str.size - 1) i += 2
+                else return res
+            }
+            str[i] in num -> {
+                res += num[str[i]]!!
+                i++
+            }
+            else -> return -1
+        }
+    }
+    if ((str[str.size - 1] in num) && (str[str.size - 1] + str[str.size - 2] !in num))
+        res += num[str[str.size - 1]]!!
+    return res
+}
 
 /**
  * Очень сложная
@@ -207,4 +345,48 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val order = commands.split(Regex("")).filter { (it != "") }
+    val res = mutableListOf<Int>()
+    if (order.count { it == "]" } != order.count { it == "[" }) throw IllegalArgumentException()
+    for (j in 0 until cells) res.add(0)
+    var i = cells / 2   // ячейка, где указатель сейчас
+    var count = 0           // количество команд
+    var k = 0             // переключение между командами
+    while (count < limit) {
+        when (order[k]){
+            ">" -> i++
+            "<" -> i--
+            "+" -> res[i]++
+            "-" -> res[i]--
+            " " -> k
+            "[" -> if (res[i] == 0) {
+                var bkt1 = 0
+                while (true) {
+                    val see = order[k]
+                    k++
+                    if (order[k] == "[") bkt1++
+                    if ((order[k] == "]") && (bkt1 == 0)) break
+                    if ((order[k] == "]") && (bkt1 > 0)) bkt1--
+                }
+            }
+            "]" -> if (res[i] != 0) {
+                var bkt2 = 0
+                while (true) {
+                    val see = order[k]
+                    k--
+                    if (order[k] == "]") bkt2++
+                    if ((order[k] == "[") && (bkt2 == 0)) break
+                    if ((order[k] == "[") && (bkt2 > 0)) bkt2--
+                }
+            }
+            else -> throw IllegalArgumentException()
+        }
+        k++
+        if (k == order.size) break
+        if (i >= cells) throw IllegalStateException()
+        count++
+    }
+
+    return res
+}
