@@ -96,11 +96,11 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val res = mutableMapOf<String, String>()
-    val phoneRes = listOf<String>()
+    val phoneRes = String()
     for ((nameA, phoneA) in mapA) {
         val x = mapB[nameA]
-        if ((nameA in mapB) && (phoneA != x)) {
-            res += nameA to (phoneRes + phoneA + x).joinToString(separator = ", ")
+        if ((phoneA != x) && (x != null)) {
+            res += nameA to "$phoneA, $x"
         }
         else res += nameA to phoneA
     }
@@ -123,7 +123,8 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val res = mutableMapOf<Int, MutableList<String>>()
     for ((name, value) in grades) {
-        res[value] = (res[value]?.plus(name))?.toMutableList() ?: mutableListOf(name)
+        if (value !in res) res[value] = mutableListOf(name)
+        else res[value]?.plusAssign(name)
     }
     return res
 }
@@ -158,14 +159,14 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val num = mutableMapOf<String, Pair<Double, Int>>()
     val res = mutableMapOf<String, Double>()
-    for (element in stockPrices) {
-        if (element.first !in num) {
-            num += element.first to (element.second to 1)
+    for ((stock, price) in stockPrices) {
+        if (stock !in num) {
+            num += stock to (price to 1)
         }
         else {
-            val name = element.first
-            val value = num[name]
-            num[name] = value!!.first + element.second to value!!.second.plus(1)
+            val name = stock
+            val value = num[name]!!
+            num[name] = value.first + price to value.second.plus(1)
         }
     }
     for ((name, info) in num) {
@@ -358,10 +359,20 @@ fun hasAnagrams(words: List<String>): Boolean {
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (i in 0 until list.size) {
-        val num = number - list[i]
-        if ((num in list) && (list.indexOf(num) != i))
-            return i to list.indexOf(num)
+    var first = 0
+    var last = list.size - 1
+    val sort = list.sorted()
+    while (first < last) {
+        val sum = sort[first] + sort[last]
+        if (sum == number) {
+            val a = list.indexOf(sort[first])
+            val b = list.indexOf(sort[last])
+            return minOf(a, b) to maxOf(a, b)
+        }
+        else {
+            if (sum < number) first++
+            else last--
+        }
     }
     return -1 to -1
 }
