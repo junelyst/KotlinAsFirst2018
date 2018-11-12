@@ -242,8 +242,7 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         if (element !in res) res += element to mutableSetOf()
         for ((person, people) in res) {
             if (((person != element) && res[person]!!.contains(element))) {
-                val setFr = res[person]!!.union(res[element]!!.toMutableSet()) - person
-                res[person] = setFr.toMutableSet()
+                res[person]!!.plusAssign(res[person]!!.union(res[element]!!.toMutableSet()) - person)
             }
         }
     }
