@@ -37,6 +37,7 @@ class Tests {
         assertEquals(Square(5, 5), square("e5"))
         assertEquals(Square(6, 8), square("f8"))
         assertEquals(Square(4, 1), square("d1"))
+        assertThrows(IllegalArgumentException::class.java) { square("") }
     }
 
     @Test
@@ -95,6 +96,7 @@ class Tests {
     @Test
     @Tag("Hard")
     fun bishopTrajectory() {
+        assertEquals(listOf(square("c6"), square("a4"), square("d1")), bishopTrajectory(square("c6"), square("d1")))
         assertEquals(listOf<Square>(), bishopTrajectory(square("a1"), square("g8")))
         assertEquals(listOf<Square>(), bishopTrajectory(square("c1"), square("f3")))
         assertEquals(listOf(square("d4")), bishopTrajectory(square("d4"), square("d4")))

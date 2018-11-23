@@ -48,6 +48,9 @@ fun square(notation: String): Square {
     catch (e: NumberFormatException) {
         throw IllegalArgumentException()
     }
+    catch (e: IndexOutOfBoundsException) {
+        throw IllegalArgumentException()
+    }
 }
 
 /**
@@ -165,7 +168,7 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> { //не расс
         (start.column % 2 != end.column % 2) && (start.row % 2 != end.row % 2) ||
         (start.column == end.column) && (start.row % 2 == end.row % 2) ||
         (start.row == end.row) && (start.column % 2 == end.column % 2) -> {
-            if (start.row < end.row) {
+            if ((start.row <= end.row) || (start.column == end.column)) {
                 var x = start.column
                 var y = start.row
                 while (abs(x - end.column) != abs(y - end.row)) {
@@ -186,9 +189,13 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> { //не расс
                         break
                     }
                 }
-                res.add(Square(x, y))
+                if (Square(x, y) != start) res.add(Square(x, y))
+                if (abs(x - end.column) == abs(y - end.row)) {
+                    res.add(end)
+                    return res
+                }
             }
-            else {
+            if ((start.row >= end.row) || (start.column == end.column)) {
                 var x = start.column
                 var y = start.row
                 while (abs(x - end.column) != abs(y - end.row)) {
@@ -279,6 +286,18 @@ fun kingMoveNumber(start: Square, end: Square): Int {
                 count++
             }
         }
+        /**
+        if (sqRow == end.row) {
+            if (sqCol < end.column) {
+                sqCol++
+                count++
+            }
+            else {
+                sqCol--
+                count++
+            }
+        }
+        */
     }
     return count
 }

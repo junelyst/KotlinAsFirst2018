@@ -197,6 +197,7 @@ fun lineByPoints(a: Point, b: Point): Line {
     var ang = asin(cath / hyp)
     if ((a.x > b.x) && (a.y < b.y) || (a.x < b.x) && (a.y > b.y))
         ang = PI - ang
+    if (ang == PI) ang = 0.0
     return Line(a, ang)
 }
 
@@ -211,7 +212,7 @@ fun bisectorByPoints(a: Point, b: Point): Line {
     val cath = b.distance(Point(b.x, a.y))
     val ang = asin(cath / hyp) * 180.0 / PI
     var ang2 = 0.0
-    val line = lineBySegment(Segment (a, b)) //исключение при построении линии
+    val line = lineBySegment(Segment (a, b))
     val k = line.angle * 180.0 / PI
     ang2 = if (k > 90)
         90 - ang
