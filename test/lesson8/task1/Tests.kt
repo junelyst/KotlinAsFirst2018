@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import java.lang.Math.ulp
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.asin
 import kotlin.math.sqrt
 
 class Tests {
@@ -165,6 +166,7 @@ class Tests {
         assertApproxEquals(Line(Point(0.0, 0.0), 0.0), lineBySegment(Segment(Point(0.0, 0.0), Point(7.0, 0.0))))
         assertApproxEquals(Line(Point(0.0, 0.0), PI / 2), lineBySegment(Segment(Point(0.0, 0.0), Point(0.0, 8.0))))
         assertApproxEquals(Line(Point(1.0, 1.0), PI / 4), lineBySegment(Segment(Point(1.0, 1.0), Point(3.0, 3.0))))
+        assertApproxEquals(Line(Point(13.0, 0.0), 3 * PI / 4), lineByPoints(Point(13.0, 0.0), Point(10.0, 3.0)))
     }
 
     @Test
@@ -177,6 +179,7 @@ class Tests {
     @Test
     @Tag("Hard")
     fun bisectorByPoints() {
+        assertApproxEquals(Line(Point(3.0, 3.0), 3 * PI / 4), bisectorByPoints(Point(0.0, 0.0), Point(6.0, 6.0)))
         assertApproxEquals(Line(Point(2.0, 0.0), PI / 2), bisectorByPoints(Point(0.0, 0.0), Point(4.0, 0.0)))
         assertApproxEquals(Line(Point(1.0, 2.0), 0.0), bisectorByPoints(Point(1.0, 5.0), Point(1.0, -1.0)))
     }
@@ -215,6 +218,16 @@ class Tests {
         assertEquals(4.0, result.radius, 0.02)
         for (p in listOf(p1, p2, p3, p4, p5, p6)) {
             assertTrue(result.contains(p))
+        }
+        val t1 = Point(8.0, 8.0)
+        val t2 = Point(16.0, 8.0)
+        val t3 = Point(11.0, 6.0)
+        val t4 = Point(12.0, 12.0)
+        val t5 = Point(3.0, 9.0)
+        val res = minContainingCircle(t1, t2, t3, t4, t5)
+        assertEquals(6.5, res.radius, 0.02)
+        for (t in listOf(t1, t2, t3, t4, t5)) {
+            assertTrue(res.contains(t))
         }
     }
 }

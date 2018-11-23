@@ -66,6 +66,7 @@ class Tests {
         assertEquals(listOf(square("g5")), rookTrajectory(square("g5"), square("g5")))
         rookTrajectory(square("c3"), square("h6")).assertRookTrajectory(square("c3"), square("h6"), 2)
         assertEquals(listOf(square("h2"), square("h7")), rookTrajectory(square("h2"), square("h7")))
+        assertEquals(listOf(square("a8"), square("a6"), square("c6")), rookTrajectory(square("a8"), square("c6")))
     }
 
     @Test
@@ -76,6 +77,8 @@ class Tests {
         assertEquals(0, bishopMoveNumber(square("d4"), square("d4")))
         assertEquals(1, bishopMoveNumber(square("a3"), square("e7")))
         assertEquals(2, bishopMoveNumber(square("c1"), square("c7")))
+        assertEquals(2, bishopMoveNumber(square("a3"), square("h4")))
+        assertEquals(2, bishopMoveNumber(square("e2"), square("h1")))
     }
 
     private fun List<Square>.assertBishopTrajectory(start: Square, end: Square, length: Int) {
@@ -135,6 +138,7 @@ class Tests {
     @Test
     @Tag("Hard")
     fun knightMoveNumber() {
+        assertEquals(3, knightMoveNumber(square("d4"), square("a8")))
         assertEquals(0, knightMoveNumber(square("d3"), square("d3")))
         assertEquals(1, knightMoveNumber(square("e4"), square("d6")))
         assertEquals(2, knightMoveNumber(square("f5"), square("g6")))
@@ -142,6 +146,7 @@ class Tests {
         assertEquals(3, knightMoveNumber(square("d4"), square("a8")))
         assertEquals(4, knightMoveNumber(square("h7"), square("f5")))
         assertEquals(4, knightMoveNumber(square("g7"), square("h8")))
+        assertEquals(5, knightMoveNumber(square("a8"), square("h8")))
         assertEquals(6, knightMoveNumber(square("a8"), square("h1")))
     }
 
