@@ -407,11 +407,12 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             if (info.first <= capacity) return setOf(name)
         }
     }
-    val select = Array(capacity, {IntArray(capacity)})
-        for (i in 0 until capacity) {
+    val sz = maxOf(capacity, treasures.size)
+    val select = Array(sz, {IntArray(sz)})
+        for (i in 0 until sz) {
             select[0][i] = 0
         }
-        for (i in 0 until capacity) {
+        for (i in 0 until sz) {
             select[i][0] = 0
         }
     //сортировка

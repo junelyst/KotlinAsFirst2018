@@ -413,6 +413,14 @@ class Tests {
                         450
                 )
         )
+        assertEquals(
+                setOf("15", "1"),
+                bagPacking(
+                        mapOf("0" to (1 to 149), "1" to (1 to 470), "2" to (399 to 2),
+                                "14" to (1 to 2), "15" to (1 to 375), "33" to (1 to 274)),
+                        2
+                )
+        )
     }
 
     // TODO: map task tests
