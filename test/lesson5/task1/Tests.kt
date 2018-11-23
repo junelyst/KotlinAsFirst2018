@@ -362,18 +362,24 @@ class Tests {
     @Tag("Impossible")
     fun bagPacking() {
         assertEquals(
-                setOf("Кубок", "Трофей", "Слиток"),
+                setOf("Приз"),
                 bagPacking(
-                        mapOf("Кубок" to (200 to 1700), "Слиток" to (250 to 1500), "Трофей" to (140 to 1800),
-                                "Кристалл" to (350 to 2000), "Приз" to (200 to 1900)),
-                        600
+                        mapOf("Приз" to (20 to 1700)),
+                        60
                 )
         )
         assertEquals(
                 setOf("Кубок"),
                 bagPacking(
-                        mapOf("Кубок" to (500 to 2000), "Слиток" to (1000 to 5000)),
-                        850
+                        mapOf("Кубок" to (5 to 2000), "Слиток" to (10 to 5000)),
+                        8
+                )
+        )
+        assertEquals(
+                setOf("Кубок", "Трофей"),
+                bagPacking(
+                        mapOf("Кубок" to (20 to 1700), "Слиток" to (45 to 1500), "Трофей" to (30 to 1800)),
+                        60
                 )
         )
         assertEquals(
@@ -384,7 +390,23 @@ class Tests {
                 )
         )
         assertEquals(
-                setOf("Кубок", "Трофей"),
+                setOf("Кубок", "Трофей", "Приз"),
+                bagPacking(
+                        mapOf("Кубок" to (20 to 1700), "Слиток" to (25 to 1500), "Трофей" to (14 to 1800),
+                                "Кристалл" to (35 to 2000), "Приз" to (20 to 1900)),
+                        60
+                )
+        )
+        assertEquals(
+                setOf("Кубок", "Трофей", "Кристалл"),
+                bagPacking(
+                        mapOf("Кристалл" to (1 to 2000), "Приз" to (5 to 1900), "Трофей" to (4 to 1800),
+                                "Слиток" to (3 to 1500), "Кубок" to (1 to 1700)),
+                        6
+                )
+        )
+        assertEquals(
+                setOf("Кристалл", "Трофей"),
                 bagPacking(
                         mapOf("Кубок" to (400 to 2000), "Слиток" to (1000 to 5000), "Трофей" to (50 to 3500),
                         "Кристалл" to (50 to 3000)),
