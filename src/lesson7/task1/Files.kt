@@ -611,7 +611,8 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
             count++
         }
         it.write("-".repeat(max) + "\n")
-        it.write(" $res")
+        if ("$res".length >= max) it.write("$res")
+        else it.write(" $res")
     }
 }
 
