@@ -354,9 +354,11 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
         var max = 0
         val res = mutableListOf<String>()
         for (line in File(inputName).readLines()) {
-            if ((line.toLowerCase().toSet().size == line.length) && (line.length >= max)) {
-                max = line.length
-                res.add(line)
+            for (word in line.split(Regex("[\\p{Punct}\\s]"))) {
+                if ((word.toLowerCase().toSet().size == word.length) && (word.length >= max)) {
+                    max = word.length
+                    res.add(word)
+                }
             }
         }
         var count = 0
@@ -592,7 +594,9 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     File(outputName).bufferedWriter().use {
         val lhvLen = lhv.toString().length
         val rhvLen = rhv.toString().length
-        val max = ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen
+        val max =
+        if (rhvLen == 1) ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen
+        else ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen + 1
         val res = lhv * rhv
         it.write(" ".repeat(max - lhvLen) + lhv + "\n")
         it.write("*" + " ".repeat(max - rhvLen - 1) + rhv + "\n")
@@ -611,8 +615,11 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
             count++
         }
         it.write("-".repeat(max) + "\n")
-        if ("$res".length >= max) it.write("$res")
-        else it.write(" $res")
+        when {
+            (max - "$res".length > 1) -> it.write(" ".repeat(max - "$res".length) + "$res")
+            ("$res".length >= max) -> it.write("$res")
+            else -> it.write(" $res")
+        }
     }
 }
 
