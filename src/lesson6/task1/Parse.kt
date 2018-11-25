@@ -72,19 +72,18 @@ fun main(args: Array<String>) {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
+val months = listOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля",
+        "августа", "сентября", "октября", "ноября", "декабря")
+
 fun dateStrToDigit(str: String): String {
-    val months = listOf("", "января", "февраля", "марта", "апреля", "мая", "июня", "июля",
-            "августа", "сентября", "октября", "ноября", "декабря")
     val date = str.split(" ")
     if (date.size != 3) return ""
     try {
         val day = date[0].toInt()
-        var month = -1
+        var month = 0
         val year = date[2].toInt()
-        for (i in 0 until months.size) {
-            if (date[1] == months[i]) month = i
-        }
-        if ((month == -1) || (day > daysInMonth(month, year)) || (day < 1) || (year < 0)) return ""
+        month = months.indexOf(date[1]) + 1
+        if ((month == 0) || (day > daysInMonth(month, year)) || (day < 1) || (year < 0)) return ""
         return String.format("%02d.%02d.%d", day, month, year)
     }
     catch (e: NumberFormatException) {
@@ -103,17 +102,13 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    val months = listOf("", "января", "февраля", "марта", "апреля", "мая", "июня", "июля",
-            "августа", "сентября", "октября", "ноября", "декабря")
     val date = digital.split(".")
     try {
         val day = date[0].toInt()
         val year = date[2].toInt()
         if (date.size != 3) return ""
         var month = String()
-        for (i in 0 until months.size) {
-            if (i == date[1].toInt()) month = months[i]
-        }
+        if (date[1].toInt() in 1..13) month = months[date[1].toInt() - 1]
         if ((month.isEmpty()) || (day > daysInMonth(date[1].toInt(), year)) || (day < 1) || (year < 0)) return ""
         return String.format("%d %s %d", day, month, year)
     }
@@ -208,15 +203,14 @@ fun bestHighJump(jumps: String): Int {
 fun plusMinus(expression: String): Int {
     val exp = expression.split(" ")
     try {
-        for (i in 0 until exp[0].length) {
-            if (exp[0][0] !in '0'..'9') throw IllegalArgumentException()
-        }
+        if (!Regex("\\d+").matches(exp[0])) throw IllegalArgumentException()
         var res = exp[0].toInt()
         for (i in 0 until exp.size - 1 step 2) {
-            when {
-                exp[i + 2].toInt() < 0 -> throw IllegalArgumentException()
-                (exp[i + 1] == "+") -> res += exp[i + 2].toInt()
-                (exp[i + 1] == "-") -> res -= exp[i + 2].toInt()
+            val num = exp[i + 2].toInt()
+            if (num < 0)  throw IllegalArgumentException()
+            when (exp[i + 1]) {
+                "+" -> res += num
+                "-" -> res -= num
                 else -> throw IllegalArgumentException()
             }
         }
@@ -237,11 +231,11 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    val words = str.split(" ")
-    var count = -1
-    for (i in 0 until words.size - 1) {
-        if (words[i].toLowerCase() == words[i + 1].toLowerCase()) return count + 1
-        count += words[i].length + 1
+    val words = str.split(" ").zipWithNext()
+    var count = 0
+    for (i in 0 until words.size) {
+        if (words[i].first.toLowerCase() == words[i].second.toLowerCase()) return count + words[0].first.length - words[i].second.length
+        count += words[i].second.length + 1
     }
     return -1
 }
@@ -352,7 +346,7 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    val order = commands.split(Regex("")).filter { (it != "") }
+    val order = commands.split(Regex("")).filter { it != "" }
     val res = mutableListOf<Int>()
     if (order.count { it == "]" } != order.count { it == "[" }) throw IllegalArgumentException()
     var num = 0

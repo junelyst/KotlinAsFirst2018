@@ -123,7 +123,8 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val res = mutableMapOf<Int, MutableList<String>>()
     for ((name, value) in grades) {
-        if (value !in res) res[value] = mutableListOf(name)
+        val x = res[value]
+        if (x == null) res[value] = mutableListOf(name)
         else res[value]?.plusAssign(name)
     }
     return res
@@ -160,12 +161,12 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     val num = mutableMapOf<String, Pair<Double, Int>>()
     val res = mutableMapOf<String, Double>()
     for ((stock, price) in stockPrices) {
-        if (stock !in num) {
+        val x = num[stock]
+        if (x == null) {
             num += stock to (price to 1)
         }
         else {
-            val value = num[stock]!!
-            num[stock] = value.first + price to value.second.plus(1)
+            num[stock] = x.first + price to x.second.plus(1)
         }
     }
     for ((name, info) in num) {
@@ -238,10 +239,12 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         res += person to people.toMutableSet()
     }
     for (element in setOfNames) {
-        if (element !in res) res += element to mutableSetOf()
+        val x = res[element]
+        if (x == null) res += element to mutableSetOf()
         for ((person, people) in res) {
             if (((person != element) && res[person]!!.contains(element))) {
-                res[person]!!.plusAssign(res[person]!!.union(res[element]!!.toMutableSet()) - person)
+                people.plusAssign(people.union(res[element]!!))
+                people -= person
             }
         }
     }
