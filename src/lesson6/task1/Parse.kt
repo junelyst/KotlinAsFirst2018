@@ -108,7 +108,7 @@ fun dateDigitToStr(digital: String): String {
         val year = date[2].toInt()
         if (date.size != 3) return ""
         var month = String()
-        if (date[1].toInt() in 1..13) month = months[date[1].toInt() - 1]
+        if (date[1].toInt() in 1..12) month = months[date[1].toInt() - 1]
         if ((month.isEmpty()) || (day > daysInMonth(date[1].toInt(), year)) || (day < 1) || (year < 0)) return ""
         return String.format("%d %s %d", day, month, year)
     }
