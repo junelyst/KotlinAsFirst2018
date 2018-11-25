@@ -136,7 +136,10 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
         start == end -> 0
         abs(start.column - end.column) == abs(start.row - end.row) -> 1
         (start.column % 2 == start.row % 2) && (end.column % 2 == end.row % 2) ||
-        (start.column % 2 != end.column % 2) && (start.row % 2 != end.row % 2) -> 2
+            (start.column % 2 == start.row % 2) && (end.column % 2 == end.row % 2) ||
+            (start.column % 2 != end.column % 2) && (start.row % 2 != end.row % 2) ||
+            (start.column == end.column) && (start.row % 2 == end.row % 2) ||
+            (start.row == end.row) && (start.column % 2 == end.column % 2) -> 2
         else -> -1
     }
 }
