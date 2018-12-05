@@ -155,7 +155,10 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    val str = jumps.split(Regex("""-| % | """)).filter { it != "" }
+    for (element in jumps.split(" ").filter { it != "" }) {
+        if ((!element.matches(Regex("""\d+"""))) && (element != "%") && (element != "-")) return -1
+    }
+    val str = jumps.split(Regex("""[-% ]""")).filter { it != "" }
     var max = -1
     try {
         for (part in str) {
@@ -255,7 +258,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
-    val reg = Regex("""([\wа-яА-Я]+ \d+(.\d+)*; )+""")
+    val reg = Regex("""(.+ \d+(.\d+)*; )+""")
     val k = "$description; "
     if (!("$description; ").matches(reg)) return ""
     val prices = description.split(" ", "; ")
