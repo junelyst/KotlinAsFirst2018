@@ -38,6 +38,8 @@ class Tests {
         assertEquals(Square(6, 8), square("f8"))
         assertEquals(Square(4, 1), square("d1"))
         assertThrows(IllegalArgumentException::class.java) { square("") }
+        assertThrows(IllegalArgumentException::class.java) { square("ha") }
+        assertThrows(IllegalArgumentException::class.java) { square("z5") }
     }
 
     @Test

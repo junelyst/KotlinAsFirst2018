@@ -80,9 +80,8 @@ fun dateStrToDigit(str: String): String {
     if (date.size != 3) return ""
     try {
         val day = date[0].toInt()
-        var month = 0
+        val month = months.indexOf(date[1]) + 1
         val year = date[2].toInt()
-        month = months.indexOf(date[1]) + 1
         if ((month == 0) || (day > daysInMonth(month, year)) || (day < 1) || (year < 0)) return ""
         return String.format("%02d.%02d.%d", day, month, year)
     }
@@ -104,11 +103,12 @@ fun dateStrToDigit(str: String): String {
 fun dateDigitToStr(digital: String): String {
     val date = digital.split(".")
     try {
+        if (date.size != 3) return ""
         val day = date[0].toInt()
         val year = date[2].toInt()
-        if (date.size != 3) return ""
-        var month = String()
-        if (date[1].toInt() in 1..12) month = months[date[1].toInt() - 1]
+        val m = date[1].toInt()
+        if (m !in 1..12) return ""
+        val month = months[m - 1]
         if ((month.isEmpty()) || (day > daysInMonth(date[1].toInt(), year)) || (day < 1) || (year < 0)) return ""
         return String.format("%d %s %d", day, month, year)
     }
@@ -130,8 +130,9 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
+    val reg = Regex("""\+? *\d+[\d -]*(\( *\d+[\d ]* *\))?[\d -]*""")
     val number = phone.split("-", " ", "(", ")").filter { it != "" }
-    if (number.isEmpty()) return ""
+    if ((number.isEmpty()) || (!phone.matches(reg))) return ""
     val res = StringBuilder()
     for (part in number) {
         res.append(part)
@@ -154,11 +155,12 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    val str = jumps.split("-", "%", " ").filter { it != "" }
+    val str = jumps.split(Regex("""-| % | """)).filter { it != "" }
     var max = -1
     try {
         for (part in str) {
-            if (part.toInt() > max) max = part.toInt()
+            val num = part.toInt()
+            if (num > max) max = num
         }
     }
     catch (e: NumberFormatException) {
@@ -182,7 +184,8 @@ fun bestHighJump(jumps: String): Int {
     var max = -1
     try {
         for (i in 0 until str.size - 1 step 2) {
-            if (('+' in str[i + 1]) && (str[i].toInt() > max)) max = str[i].toInt()
+            val num = str[i].toInt()
+            if (('+' in str[i + 1]) && (num > max)) max = num
         }
     }
     catch (e: NumberFormatException) {
@@ -207,7 +210,7 @@ fun plusMinus(expression: String): Int {
         var res = exp[0].toInt()
         for (i in 0 until exp.size - 1 step 2) {
             val num = exp[i + 2].toInt()
-            if (num < 0)  throw IllegalArgumentException()
+            if (num < 0) throw IllegalArgumentException()
             when (exp[i + 1]) {
                 "+" -> res += num
                 "-" -> res -= num
@@ -233,9 +236,9 @@ fun plusMinus(expression: String): Int {
 fun firstDuplicateIndex(str: String): Int {
     val words = str.split(" ").zipWithNext()
     var count = 0
-    for (i in 0 until words.size) {
-        if (words[i].first.toLowerCase() == words[i].second.toLowerCase()) return count + words[0].first.length - words[i].second.length
-        count += words[i].second.length + 1
+    for (element in words) {
+        if (element.first.toLowerCase() == element.second.toLowerCase()) return count + words[0].first.length - element.second.length
+        count += element.second.length + 1
     }
     return -1
 }
@@ -252,6 +255,9 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
+    val reg = Regex("""([\wа-яА-Я]+ \d+(.\d+)*; )+""")
+    val k = "$description; "
+    if (!("$description; ").matches(reg)) return ""
     val prices = description.split(" ", "; ")
     var max = -1.0
     var name = String()
@@ -290,12 +296,11 @@ fun fromRoman(roman: String): Int {
     if ((str[0] in num) && (str.size < 2)) return num[str[0]]!!
     if (str[0] !in num) return -1
     var i = 0
-    while (i != str.size - 1) {
+    while (i < str.size - 1) {
         when {
             str[i] + str[i + 1] in num -> {
                 res += num[str[i] + str[i + 1]]!!
-                if (i + 2 <= str.size - 1) i += 2
-                else return res
+                i += 2
             }
             str[i] in num -> {
                 res += num[str[i]]!!
@@ -346,52 +351,51 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    val order = commands.split(Regex("")).filter { it != "" }
     val res = mutableListOf<Int>()
-    if (order.count { it == "]" } != order.count { it == "[" }) throw IllegalArgumentException()
+    if (commands.count { it == ']' } != commands.count { it == '[' }) throw IllegalArgumentException()
     var num = 0
-    for (element in order) {
+    for (element in commands) {
         when {
-            element == "[" -> num++
-            (element == "]") && (num == 0) -> throw IllegalArgumentException()
-            (element == "]") && (num > 0) -> num--
+            element == '[' -> num++
+            (element == ']') && (num == 0) -> throw IllegalArgumentException()
+            (element == ']') && (num > 0) -> num--
         }
     }
     for (j in 0 until cells) res.add(0)
-    if (order.isEmpty()) return res
+    if (commands.isEmpty()) return res
     var i = cells / 2   // ячейка, где указатель сейчас
     var count = 0           // количество команд
     var k = 0             // переключение между командами
     while (count < limit) {
-        when (order[k]) {
-            ">" -> i++
-            "<" -> i--
-            "+" -> res[i]++
-            "-" -> res[i]--
-            " " -> k
-            "[" -> if (res[i] == 0) {
+        when (commands[k]) {
+            '>' -> i++
+            '<' -> i--
+            '+' -> res[i]++
+            '-' -> res[i]--
+            ' ' -> k
+            '[' -> if (res[i] == 0) {
                 var bkt1 = 0
                 while (true) {
                     k++
-                    if (order[k] == "[") bkt1++
-                    if ((order[k] == "]") && (bkt1 == 0)) break
-                    if ((order[k] == "]") && (bkt1 > 0)) bkt1--
+                    if (commands[k] == '[') bkt1++
+                    if ((commands[k] == ']') && (bkt1 == 0)) break
+                    if ((commands[k] == ']') && (bkt1 > 0)) bkt1--
                 }
             }
-            "]" -> if (res[i] != 0) {
+            ']' -> if (res[i] != 0) {
                 var bkt2 = 0
                 while (true) {
                     k--
-                    if (order[k] == "]") bkt2++
-                    if ((order[k] == "[") && (bkt2 == 0)) break
-                    if ((order[k] == "[") && (bkt2 > 0)) bkt2--
+                    if (commands[k] == ']') bkt2++
+                    if ((commands[k] == '[') && (bkt2 == 0)) break
+                    if ((commands[k] == '[') && (bkt2 > 0)) bkt2--
                 }
             }
             else -> throw IllegalArgumentException()
         }
         k++
         if ((i >= cells) || (i < 0)) throw IllegalStateException()
-        if (k == order.size) break
+        if (k == commands.length) break
         count++
     }
 

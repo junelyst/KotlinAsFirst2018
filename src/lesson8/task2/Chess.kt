@@ -8,7 +8,7 @@ import kotlin.math.abs
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
  * Горизонтали нумеруются снизу вверх, вертикали слева направо.
  */
-val letters = listOf('x', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
+const val letters = "abcdefgh"
 data class Square(val column: Int, val row: Int) {
     /**
      * Пример
@@ -25,7 +25,7 @@ data class Square(val column: Int, val row: Int) {
      * Для клетки не в пределах доски вернуть пустую строку
      */
     fun notation(): String {
-        return if (inside()) "${letters[column]}$row"
+        return if (inside()) "${letters[column - 1]}$row"
         else ""
     }
 }
@@ -38,19 +38,9 @@ data class Square(val column: Int, val row: Int) {
  * Если нотация некорректна, бросить IllegalArgumentException
  */
 fun square(notation: String): Square {
-    try {
-        if ((notation[1] - '0' !in 1..8) || (notation.length > 2)) throw IllegalArgumentException()
-        return Square(letters.indexOf(notation[0]), notation[1] - '0')
-    }
-    catch (e: ArrayIndexOutOfBoundsException) {
+    if ((notation.length != 2) || (notation[1] - '0' !in 1..8) || (notation[0] !in letters))
         throw IllegalArgumentException()
-    }
-    catch (e: NumberFormatException) {
-        throw IllegalArgumentException()
-    }
-    catch (e: IndexOutOfBoundsException) {
-        throw IllegalArgumentException()
-    }
+    return Square(letters.indexOf(notation[0]) + 1, notation[1] - '0')
 }
 
 /**
@@ -136,10 +126,9 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
         start == end -> 0
         abs(start.column - end.column) == abs(start.row - end.row) -> 1
         (start.column % 2 == start.row % 2) && (end.column % 2 == end.row % 2) ||
-            (start.column % 2 == start.row % 2) && (end.column % 2 == end.row % 2) ||
-            (start.column % 2 != end.column % 2) && (start.row % 2 != end.row % 2) ||
-            (start.column == end.column) && (start.row % 2 == end.row % 2) ||
-            (start.row == end.row) && (start.column % 2 == end.column % 2) -> 2
+                (start.column % 2 != end.column % 2) && (start.row % 2 != end.row % 2) ||
+                (start.column == end.column) && (start.row % 2 == end.row % 2) ||
+                (start.row == end.row) && (start.column % 2 == end.column % 2) -> 2
         else -> -1
     }
 }
@@ -168,9 +157,9 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> { //не расс
         start == end -> return listOf(start) //0
         start.column - end.column == start.row - end.row -> return listOf(start, end) //1
         (start.column % 2 == start.row % 2) && (end.column % 2 == end.row % 2) ||
-        (start.column % 2 != end.column % 2) && (start.row % 2 != end.row % 2) ||
-        (start.column == end.column) && (start.row % 2 == end.row % 2) ||
-        (start.row == end.row) && (start.column % 2 == end.column % 2) -> {
+                (start.column % 2 != end.column % 2) && (start.row % 2 != end.row % 2) ||
+                (start.column == end.column) && (start.row % 2 == end.row % 2) ||
+                (start.row == end.row) && (start.column % 2 == end.column % 2) -> {
             if ((start.row <= end.row) || (start.column == end.column)) {
                 var x = start.column
                 var y = start.row

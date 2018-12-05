@@ -154,7 +154,7 @@ class Line private constructor(val b: Double, val angle: Double) {
     fun crossPoint(other: Line): Point {
         var x = 0.0
         var y = 0.0
-        if (other.angle != 0.0) {
+        if (other.angle > this.angle) {
             y = (this.b * sin(other.angle) - other.b * sin(this.angle)) / sin(other.angle - this.angle)
             x = (y * cos(other.angle) - other.b) / sin(other.angle)
         }
@@ -181,17 +181,7 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line {
-    val hyp = s.begin.distance(s.end)
-    val cath = s.end.distance(Point(s.end.x, s.begin.y))
-    var ang = asin(cath / hyp)
-    val a = s.begin
-    val b = s.end
-    if ((a.x > b.x) && (a.y < b.y) || (a.x < b.x) && (a.y > b.y))
-        ang = PI - ang
-    if (ang == PI) ang = 0.0
-    return Line(s.begin, ang)
-}
+fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)
 
 /**
  * Средняя
@@ -215,18 +205,13 @@ fun lineByPoints(a: Point, b: Point): Line {
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
     val center = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
-    val hyp = a.distance(b)
-    val cath = b.distance(Point(b.x, a.y))
-    val ang = asin(cath / hyp) * 180.0 / PI
     var ang2 = 0.0
-    val line = lineBySegment(Segment (a, b))
-    val k = line.angle * 180.0 / PI
-    ang2 = if (k > 90)
-        90 - ang
-    else 180 - (90 - ang)
-
-    ang2 = if (ang2 * PI / 180 == PI) 0.0
-    else ang2 * PI / 180
+    val line = lineBySegment(Segment(a, b))
+    val ang = line.angle
+    ang2 = if (ang > PI / 2)
+        PI / 2 - ang
+    else PI / 2 + ang
+    if (ang2 == PI) ang2 = 0.0
     return Line(center, ang2)
 }
 
@@ -242,8 +227,9 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
     var res = Pair(circles[0], circles[0])
     for (i in 0 until circles.size) {
         for (k in i + 1 until circles.size) {
-            if (circles[i].distance(circles[k]) < min) {
-                min = circles[i].distance(circles[k])
+            val dist = circles[i].distance(circles[k])
+            if (dist < min) {
+                min = dist
                 res = Pair(circles[i], circles[k])
             }
         }

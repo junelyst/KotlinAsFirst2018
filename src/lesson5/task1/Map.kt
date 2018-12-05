@@ -163,10 +163,10 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     for ((stock, price) in stockPrices) {
         val x = num[stock]
         if (x == null) {
-            num += stock to (price to 1)
+            num[stock] = price to 1
         }
         else {
-            num[stock] = x.first + price to x.second.plus(1)
+            num[stock] = x.first + price to x.second + 1
         }
     }
     for ((name, info) in num) {
@@ -230,20 +230,21 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     val res = mutableMapOf<String, MutableSet<String>>()
     val setOfNames = mutableSetOf<String>()
     for ((person, people) in friends) {
-        if (person !in setOfNames) setOfNames.add(person)
-        for (element in people) {
-            if (element !in setOfNames) setOfNames.add(element)
-        }
+        setOfNames.add(person)
+        setOfNames.addAll(people)
     }
     for ((person, people) in friends) {
         res += person to people.toMutableSet()
     }
     for (element in setOfNames) {
-        val x = res[element]
-        if (x == null) res += element to mutableSetOf()
+        var x = res[element]
+        if (x == null) {
+            res[element] = mutableSetOf()
+            x = res[element]
+        }
         for ((person, people) in res) {
-            if (((person != element) && res[person]!!.contains(element))) {
-                people.plusAssign(people.union(res[element]!!))
+            if (((person != element) && people!!.contains(element))) {
+                people.plusAssign(people.union(x!!))
                 people -= person
             }
         }
@@ -360,20 +361,11 @@ fun hasAnagrams(words: List<String>): Boolean {
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    var first = 0
-    var last = list.size - 1
-    val sort = list.sorted()
-    while (first < last) {
-        val sum = sort[first] + sort[last]
-        if (sum == number) {
-            val a = list.indexOf(sort[first])
-            val b = list.indexOf(sort[last])
-            return minOf(a, b) to maxOf(a, b)
-        }
-        else {
-            if (sum < number) first++
-            else last--
-        }
+    val mapNum = mutableMapOf<Int, Int>()
+    for (i in 0 until list.size) mapNum[list[i]] = i
+    for (i in 0 until list.size) {
+        val x = number - list[i]
+        if ((x in mapNum) && (i != mapNum[x])) return i to mapNum[x]!!
     }
     return -1 to -1
 }
@@ -397,68 +389,4 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    if (treasures.size == 1) {
-        for ((name, info) in treasures) {
-            return if (info.first <= capacity) setOf(name)
-            else setOf()
-        }
-    }
-    if (treasures.size == 2) {
-        val s = treasures.toList().sortedBy { it.second.second }.reversed()
-        for ((name, info) in s) {
-            if (info.first <= capacity) return setOf(name)
-        }
-    }
-    val sz = maxOf(capacity, treasures.size)
-    val select = Array(sz, {IntArray(sz)})
-        for (i in 0 until sz) {
-            select[0][i] = 0
-        }
-        for (i in 0 until sz) {
-            select[i][0] = 0
-        }
-    //сортировка
-    val sort = mutableMapOf<String, Int>()
-    for ((name, info) in treasures) {
-        sort += name to info.second / info.first
-    }
-    val sortMap = sort.toList().sortedBy { it.second }
-    val sorted = mutableListOf<Pair<String, Pair<Int, Int>>>()
-    for ((nameS, k) in sortMap) {
-        for ((name, info) in treasures) {
-            if (nameS == name) sorted += name to info
-        }
-    }
-    ///
-    val weight = mutableListOf<Int>()
-    val price = mutableListOf<Int>()
-    val names = mutableListOf<String>()
-    for ((name, info) in sorted) { //массивы веса, стоимости и имён
-        weight.add(info.first)
-        price.add(info.second)
-        names.add(name)
-    }
-    var max = -1
-    val res = mutableSetOf<String>()
-    val storage = mutableMapOf<String, Pair<String, Int>>()
-    for (i in 1 until sorted.size) {
-        for (j in 0 until capacity) {
-            if (weight[i] > j)
-                select[i][j] = select[i - 1][j]
-            else select[i][j] = maxOf(select[i - 1][j], select[i - 1][j - weight[i]] + price[i])
-            if ((select[i][j] > max) && (j == capacity - 1)) {
-                max = select[i][j]
-                storage += "$i$j" to (names[i] to max)
-            }
-        }
-    }
-    var w = 0
-    val storageR = storage.toList().sortedBy{ it.second.second }.reversed()
-    for ((name, info) in storageR) {
-        w += treasures[info.first]!!.first
-        if (w > capacity) break
-        res += info.first
-    }
-    return res
-}
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
