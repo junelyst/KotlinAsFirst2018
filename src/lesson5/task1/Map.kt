@@ -123,9 +123,10 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val res = mutableMapOf<Int, MutableList<String>>()
     for ((name, value) in grades) {
-        val x = res[value]
-        if (x == null) res[value] = mutableListOf(name)
-        else res[value]?.plusAssign(name)
+        var x = res[value]
+        if (x == null) x = mutableListOf(name)
+        else x?.plusAssign(name)
+        res[value] = x
     }
     return res
 }
