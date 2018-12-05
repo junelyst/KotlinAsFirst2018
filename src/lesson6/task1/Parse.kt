@@ -312,6 +312,7 @@ fun fromRoman(roman: String): Int {
             else -> return -1
         }
     }
+    if ((str[str.size - 1] !in num)) return -1
     if ((str[str.size - 1] in num) && (str[str.size - 2] + str[str.size - 1] !in num))
         res += num[str[str.size - 1]]!!
     return res
