@@ -270,25 +270,35 @@ fun minContainingCircle(vararg points: Point): Circle {
     if (points.size == 1) return Circle(points[0], 0.0)
     var res = Circle(points[0], 0.0)
     val diam = diameter(*points)
+    res = circleByDiameter(diam)
     val p1 = diam.begin
     val p2 = diam.end
-    res = circleByDiameter(diam)
     var b = false
     for (element in points) {
         if (!res.contains(element)) b = true
     }
+
+    val info = mutableMapOf<Double, Circle>() // радиус и окружность
     if (b) {
-        val c = res.center
-        var max = -1.0
         var p3 = Point(0.0, 0.0)
         for (element in points) {
-            if ((c.distance(element) > max) && (element != p1) && (element != p2)) {
-                max = c.distance(element)
-                p3 = element
+            var flag = false
+            if ((element != p1) && (element != p2)) {
+                res = circleByThreePoints(p1, p2, element)
+                for (element in points) {
+                    if (!res.contains(element)) flag = true
+                }
             }
+            if (!flag && (element != p1) && (element != p2))
+                info[res.radius] = res
         }
-        res = circleByThreePoints(diam.begin, diam.end, p3)
     }
-    return res
+    else return res
+
+    var min = Double.POSITIVE_INFINITY
+    for ((rad, circle) in info) {
+        if (rad < min) min = rad
+    }
+    return info[min]!!
 }
 

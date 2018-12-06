@@ -123,10 +123,9 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val res = mutableMapOf<Int, MutableList<String>>()
     for ((name, value) in grades) {
-        var x = res[value]
-        if (x == null) x = mutableListOf(name)
-        else x?.plusAssign(name)
-        res[value] = x
+        val x = res[value]
+        if (x == null) res[value] = mutableListOf(name)
+        else x.plusAssign(name)
     }
     return res
 }
@@ -238,14 +237,10 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         res += person to people.toMutableSet()
     }
     for (element in setOfNames) {
-        var x = res[element]
-        if (x == null) {
-            res[element] = mutableSetOf()
-            x = res[element]
-        }
+        val x = res.getOrPut(element) { mutableSetOf() }
         for ((person, people) in res) {
-            if (((person != element) && people!!.contains(element))) {
-                people.plusAssign(people.union(x!!))
+            if (((person != element) && people.contains(element))) {
+                people += x
                 people -= person
             }
         }
@@ -363,11 +358,12 @@ fun hasAnagrams(words: List<String>): Boolean {
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val mapNum = mutableMapOf<Int, Int>()
-    for (i in 0 until list.size) mapNum[list[i]] = i
-    for (i in 0 until list.size) {
-        val x = number - list[i]
-        if ((x in mapNum) && (i != mapNum[x])) return i to mapNum[x]!!
-    }
+        for (i in 0 until list.size) {
+            mapNum[list[i]] = i
+            val x = number - list[i]
+            val index = mapNum[x]
+            if ((index != null) && (i != index)) return index to i
+        }
     return -1 to -1
 }
 

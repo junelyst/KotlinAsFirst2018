@@ -94,6 +94,7 @@ class Tests {
         assertEquals(226, bestHighJump("226 +"))
         assertEquals(-1, bestHighJump("???"))
         assertEquals(230, bestHighJump("220 + 224 %+ 228 %- 230 + 232 %%- 234 %"))
+        assertEquals(-1, bestHighJump("220 224 %+ 228 %- 230 + 232 %%- 234 %"))
     }
 
     @Test
@@ -124,6 +125,8 @@ class Tests {
     fun mostExpensive() {
         assertEquals("", mostExpensive(""))
         assertEquals("Вино", mostExpensive("Вино 255.0"))
+        assertEquals("", mostExpensive("Вино 255.0.0"))
+        assertEquals("", mostExpensive("Вино 255f0"))
         assertEquals("Курица", mostExpensive("Хлеб 39.9; Молоко 62.5; Курица 184.0; Конфеты 89.9"))
         assertEquals("Tea", mostExpensive("Tea 255.0"))
         assertEquals("sfjkJ&$1", mostExpensive("sfjkJ&$1 255.0"))
