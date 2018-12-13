@@ -196,6 +196,7 @@ fun bestHighJump(jumps: String): Int {
  */
 fun plusMinus(expression: String): Int {
     val exp = expression.split(" ")
+    if (exp.size % 2 == 0) throw IllegalArgumentException()
     try {
         if (!Regex("\\d+").matches(exp[0])) throw IllegalArgumentException()
         var res = exp[0].toInt()
