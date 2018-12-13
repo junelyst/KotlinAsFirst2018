@@ -61,8 +61,10 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
         var count = 0
         val sub = element.toLowerCase()
         if (sub in str) {
-            val s= Regex(sub).findAll(str, 0)
-            for (el in s) { count++ }
+            val s = Regex(sub).findAll(str, 0)
+            for (el in s) {
+                count++
+            }
         }
         res[element] = count
     }
@@ -407,7 +409,9 @@ fun markdown(str: String, reg: Regex, murkup: String, r1: String, r2: String): S
     var count = 0
     var new = str
     val s = reg.findAll(str, 0)
-    for (el in s) { count++ }
+    for (el in s) {
+        count++
+    }
     if ((count % 2 == 0) && (count > 0)) {
         while (murkup in new) {
             new = new.replaceFirst(murkup, r1)
@@ -418,25 +422,26 @@ fun markdown(str: String, reg: Regex, murkup: String, r1: String, r2: String): S
 }
 
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
+    var input = File(inputName).inputStream().readBytes().toString(Charsets.UTF_8)
     File(outputName).bufferedWriter().use {
         it.write("<html><body><p>")
-        for (line in File(inputName).readLines()) {
-            if (line.isEmpty()) it.write("</p><p>")
-            var newLine = line
-                if ("***" in newLine) {
-                    newLine = markdown(newLine, Regex("""\*\*\*"""), "***", "<b><i>", "</b></i>")
-                }
-                if ("**" in newLine) {
-                    newLine = markdown(newLine, Regex("""\*\*"""), "**", "<b>", "</b>")
-                }
-                if ("*" in newLine) {
-                    newLine = markdown(newLine, Regex("""\*"""), "*", "<i>", "</i>")
-                }
-                if ("~~" in newLine) {
-                    newLine = markdown(newLine, Regex("~~"), "~~", "<s>", "</s>")
-                }
-            it.write(newLine)
+        if ("***" in input) {
+            input = markdown(input, Regex("""\*\*\*"""), "***", "<b><i>", "</b></i>")
         }
+        if ("**" in input) {
+            input = markdown(input, Regex("""\*\*"""), "**", "<b>", "</b>")
+        }
+        if ("*" in input) {
+            input = markdown(input, Regex("""\*"""), "*", "<i>", "</i>")
+        }
+        if ("~~" in input) {
+            input = markdown(input, Regex("~~"), "~~", "<s>", "</s>")
+        }
+        val reg = Regex("""\n\n""")
+        while (reg in input) {
+            input = reg.replace(input, "</p><p>")
+        }
+        it.write(input)
         it.write("</p></body></html>")
     }
 }
