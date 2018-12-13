@@ -56,14 +56,15 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val res = mutableMapOf<String, Int>()
+    val str = File(inputName).inputStream().readBytes().toString(Charsets.UTF_8).toLowerCase()
     for (element in substrings) {
-        if (element !in res) res += element to 0
-        for (line in File(inputName).readLines()) {
-            if (element.toLowerCase() in line.toLowerCase()) {
-                val count = line.toLowerCase().split(element.toLowerCase()).size - 1
-                res[element] = res[element]!!.plus(count)
-            }
+        var count = 0
+        val sub = element.toLowerCase()
+        if (sub in str) {
+            val s= Regex(sub).findAll(str, 0)
+            for (el in s) { count++ }
         }
+        res[element] = count
     }
     return res
 }
@@ -84,20 +85,14 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  */
 fun sibilants(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use {
-        val letters = listOf('ж', 'ч', 'ш', 'щ', 'Ж', 'Ч', 'Ш', 'Щ')
         for (line in File(inputName).readLines()) {
             var new = line
-            for (element in letters) {
-                val str = Regex("$element[ыяюЫЯЮ]")
-                while (str in new) {
-                    new = new.replace("$element" + "ы", "$element" + "и")
-                    new = new.replace("$element" + "я", "$element" + "а")
-                    new = new.replace("$element" + "ю", "$element" + "у")
-                    new = new.replace("$element" + "Ы", "$element" + "И")
-                    new = new.replace("$element" + "Я", "$element" + "А")
-                    new = new.replace("$element" + "Ю", "$element" + "У")
-                }
-            }
+                new = Regex("""(?<=[жчшщЖЧШЩ])ы""").replace(new, "и")
+                new = Regex("""(?<=[жчшщЖЧШЩ])я""").replace(new, "а")
+                new = Regex("""(?<=[жчшщЖЧШЩ])ю""").replace(new, "у")
+                new = Regex("""(?<=[жчшщЖЧШЩ])Ы""").replace(new, "И")
+                new = Regex("""(?<=[жчшщЖЧШЩ])Я""").replace(new, "А")
+                new = Regex("""(?<=[жчшщЖЧШЩ])Ю""").replace(new, "У")
             it.write(new)
             it.newLine()
         }
@@ -128,11 +123,9 @@ fun centerFile(inputName: String, outputName: String) {
             val x = line.trim()
             if (x.length > max) max = x.length
         }
-        var ind = -1
-        var new = String()
         for (line in File(inputName).readLines()) {
-            new = line.trim()
-            ind = (max - new.length) / 2
+            val new = line.trim()
+            val ind = (max - new.length) / 2
             it.write(" ".repeat(ind))
             it.write(new)
             it.newLine()
@@ -193,8 +186,8 @@ fun alignFileByWidth(inputName: String, outputName: String) {
             if (info[i].first == 0)
                 it.newLine()
             else {
-                if (info[i].first == maxLen) space = 1
-                else space = (max - info[i].first) / info[i].second
+                space = if (info[i].first == maxLen) 1
+                else (max - info[i].first) / info[i].second
                 val possible = info[i].first + space * (info[i].second - 1)
                 var diff = max - possible
                 var new = line
@@ -293,34 +286,32 @@ fun top20Words(inputName: String): Map<String, Int> {
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
     File(outputName).bufferedWriter().use {
+        val dict = mutableMapOf<Char, String>()
+        for ((el, str) in dictionary) {
+            dict[el.toLowerCase()] = str
+        }
+        var new = String()
         for (line in File(inputName).readLines()) {
-            for (word in line.split(Regex("\\n"))) {
-                var new = word
-                for (i in 0 until word.length) {
-                    val low = word[i].toLowerCase()
-                    val up = word[i].toUpperCase()
-                    var reg = false
-                    if (low != word[i]) reg = true
-                    when {
-                        low in dictionary -> {
-                            new = new.replace(low.toString(), dictionary[low]!!.toLowerCase(), ignoreCase = true)
-                            if (reg) {
-                                val letters = dictionary[low]!!
-                                new = new.replaceFirst(letters[0], letters[0].toUpperCase())
-                            }
+            new = line
+            for (element in line) {
+                val low = element.toLowerCase()
+                val reg = element.isUpperCase()
+                if (low in dict) {
+                    if (!reg) {
+                        new = new.replace(low.toString(), dict[low]!!.toLowerCase())
+                    }
+                    else {
+                        var x = String()
+                        val str = dict[low]!!
+                        for (i in 1 until str.length) {
+                            x += str[i].toLowerCase()
                         }
-                        up in dictionary -> {
-                            new = new.replace(up.toString(), dictionary[up]!!.toLowerCase(), ignoreCase = true)
-                            if (reg) {
-                                val letters = dictionary[low]!!
-                                new = new.replaceFirst(letters[0], letters[0].toUpperCase())
-                            }
-                        }
+                        new = new.replace(element.toString(), dict[low]!![0].toUpperCase() + x)
                     }
                 }
-                it.write(new)
-                it.newLine()
             }
+            it.write(new)
+            it.newLine()
         }
     }
 }
@@ -354,21 +345,17 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
         var max = 0
         val res = mutableListOf<String>()
         for (line in File(inputName).readLines()) {
-            for (word in line.split(Regex("[\\p{Punct}\\s]"))) {
-                if ((word.toLowerCase().toSet().size == word.length) && (word.length >= max)) {
-                    max = word.length
-                    res.add(word)
-                }
+            if ((line.toLowerCase().toSet().size == line.length) && (line.length >= max)) {
+                max = line.length
+                res.add(line)
             }
         }
-        var count = 0
         for (element in res) {
-            if (element.length == max) {
-                it.write(element)
-                count++
-                if (count < res.size) it.write(", ")
+            if (element.length != max) {
+                res.remove(element)
             }
         }
+        it.write(res.joinToString(separator = ", "))
     }
 }
 
@@ -415,22 +402,39 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
+fun markdown(str: String, reg: Regex, murkup: String, r1: String, r2: String): String {
+    var count = 0
+    var new = str
+    val s = reg.findAll(str, 0)
+    for (el in s) { count++ }
+    if ((count % 2 == 0) && (count > 0)) {
+        while (murkup in new) {
+            new = new.replaceFirst(murkup, r1)
+            new = new.replaceFirst(murkup, r2)
+        }
+    }
+    return new
+}
+
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    val murkup = listOf( "**" to "<b>", "**" to "</b>", "*" to "<i>", "*" to "</i>", "~~" to "<s>",
-            "~~" to "</s>")
     File(outputName).bufferedWriter().use {
         it.write("<html><body><p>")
         for (line in File(inputName).readLines()) {
             if (line.isEmpty()) it.write("</p><p>")
-            var new = line
-            for (i in 0 until murkup.size - 1 step(2)) {
-                while (new.contains(murkup[i].first)) {
-                    val x = murkup[i].first
-                    new = new.replaceFirst(x, murkup[i].second)
-                    new = new.replaceFirst(x, (murkup[i + 1].second))
+            var newLine = line
+                if ("***" in newLine) {
+                    newLine = markdown(newLine, Regex("""\*\*\*"""), "***", "<b><i>", "</b></i>")
                 }
-            }
-            it.write(new)
+                if ("**" in newLine) {
+                    newLine = markdown(newLine, Regex("""\*\*"""), "**", "<b>", "</b>")
+                }
+                if ("*" in newLine) {
+                    newLine = markdown(newLine, Regex("""\*"""), "*", "<i>", "</i>")
+                }
+                if ("~~" in newLine) {
+                    newLine = markdown(newLine, Regex("~~"), "~~", "<s>", "</s>")
+                }
+            it.write(newLine)
         }
         it.write("</p></body></html>")
     }
@@ -530,27 +534,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    val murkup = listOf("*" to "ol", "*" to "ul", "    *" to "li",
-            Regex("^\\d$" + ".").toString() to "li")
-    var countOl = 0
-    var countUl = 0
-    File(outputName).bufferedWriter().use {
-        it.write("<html><body>")
-        val listStr = File(inputName).readLines()
-        for (i in 0 until listStr.size - 1) {
-            var new = listStr[i]
-            if ((new.contains("*")) && (countUl == 0)) {
-                new = "<ul><li>$new</li>"
-                countUl++
-            }
-            if ((new.contains(Regex("^\\d$" + ".").toString())) && (countOl == 0)) {
-                new = "<ol><li>$new</li>"
-                countOl++
-            }
-            it.write(new + "\n")
-        }
-        it.write("</body></html>")
-    }
+    TODO()
 }
 
 /**
@@ -595,8 +579,8 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
         val lhvLen = lhv.toString().length
         val rhvLen = rhv.toString().length
         val max =
-        if (rhvLen == 1) ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen
-        else ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen + 1
+                if (rhvLen == 1) ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen
+                else ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen
         val res = lhv * rhv
         it.write(" ".repeat(max - lhvLen) + lhv + "\n")
         it.write("*" + " ".repeat(max - rhvLen - 1) + rhv + "\n")

@@ -131,17 +131,9 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String {
     val str = phone.filter { (it != ' ') && (it != '-') }
-    val reg = Regex("""\+?\d+(\(\d+\))?\d+""")
+    val reg = Regex("""\+*\d+(\(\d+\))?\d+""")
     if ((phone.isEmpty()) || (!str.matches(reg))) return ""
-    val number = str.filter { (it != '(') && (it != ')') }
-    val res = StringBuilder()
-    for (part in number) {
-        res.append(part)
-    }
-    for (i in 1 until res.length) {
-        if (res[i] !in '0'..'9') return ""
-    }
-    return res.toString()
+    return str.filter { (it != '(') && (it != ')') }
 }
 
 /**
@@ -157,11 +149,10 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     val listNum = mutableListOf<Int>()
     for (element in jumps.split(Regex(""" +"""))) {
-        if ((!element.matches(Regex("""\d+"""))) && (element != "%") && (element != "-")) return -1
         if (element.matches(Regex("""\d+"""))) listNum.add(element.toInt())
+        else if ((element != "%") && (element != "-")) return -1
     }
-    if (listNum.isEmpty()) return -1
-    return listNum.max()!!
+    return listNum.max() ?: -1
 }
 
 /**

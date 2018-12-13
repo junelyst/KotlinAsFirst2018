@@ -125,7 +125,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     for ((name, value) in grades) {
         val x = res[value]
         if (x == null) res[value] = mutableListOf(name)
-        else x.plusAssign(name)
+        else x += name
     }
     return res
 }
@@ -358,12 +358,12 @@ fun hasAnagrams(words: List<String>): Boolean {
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val mapNum = mutableMapOf<Int, Int>()
-        for (i in 0 until list.size) {
-            mapNum[list[i]] = i
-            val x = number - list[i]
-            val index = mapNum[x]
-            if ((index != null) && (i != index)) return index to i
-        }
+    for ((i, element) in list.withIndex()) {
+        val x = number - element
+        val index = mapNum[x]
+        if ((index != null) && (i != index)) return index to i
+        mapNum[element] = i
+    }
     return -1 to -1
 }
 
