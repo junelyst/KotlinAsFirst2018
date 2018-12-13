@@ -350,12 +350,13 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
                 res.add(line)
             }
         }
+        val result = mutableListOf<String>()
         for (element in res) {
-            if (element.length != max) {
-                res.remove(element)
+            if (element.length == max) {
+                result.add(element)
             }
         }
-        it.write(res.joinToString(separator = ", "))
+        it.write(result.joinToString(separator = ", "))
     }
 }
 
@@ -580,7 +581,7 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
         val rhvLen = rhv.toString().length
         val max =
                 if (rhvLen == 1) ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen
-                else ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen
+                else ((rhv.toString().toInt()) * lhv).toString().length + 1
         val res = lhv * rhv
         it.write(" ".repeat(max - lhvLen) + lhv + "\n")
         it.write("*" + " ".repeat(max - rhvLen - 1) + rhv + "\n")
