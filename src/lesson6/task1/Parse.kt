@@ -347,17 +347,16 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    val res = mutableListOf<Int>()
-    if (commands.count { it == ']' } != commands.count { it == '[' }) throw IllegalArgumentException()
     var num = 0
     for (element in commands) {
-        when {
-            element == '[' -> num++
-            (element == ']') && (num == 0) -> throw IllegalArgumentException()
-            (element == ']') && (num > 0) -> num--
+        when (element) {
+            '[' -> num++
+            ']' -> num--
         }
+        if (num < 0) throw IllegalArgumentException()
     }
-    for (j in 0 until cells) res.add(0)
+    if (num != 0) throw IllegalArgumentException()
+    val res = (IntArray(cells) { 0 }).toMutableList()
     if (commands.isEmpty()) return res
     var i = cells / 2   // ячейка, где указатель сейчас
     var count = 0           // количество команд
@@ -373,18 +372,22 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 var bkt1 = 0
                 while (true) {
                     k++
-                    if (commands[k] == '[') bkt1++
-                    if ((commands[k] == ']') && (bkt1 == 0)) break
-                    if ((commands[k] == ']') && (bkt1 > 0)) bkt1--
+                    when {
+                        commands[k] == '[' -> bkt1++
+                        commands[k] == ']' -> bkt1--
+                    }
+                    if (bkt1 < 0) break
                 }
             }
             ']' -> if (res[i] != 0) {
                 var bkt2 = 0
                 while (true) {
                     k--
-                    if (commands[k] == ']') bkt2++
-                    if ((commands[k] == '[') && (bkt2 == 0)) break
-                    if ((commands[k] == '[') && (bkt2 > 0)) bkt2--
+                    when {
+                        commands[k] == ']' -> bkt2++
+                        commands[k] == '[' -> bkt2--
+                    }
+                    if (bkt2 < 0) break
                 }
             }
             else -> throw IllegalArgumentException()
