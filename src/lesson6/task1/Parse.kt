@@ -131,7 +131,7 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String {
     val str = phone.filter { (it != ' ') && (it != '-') }
-    val reg = Regex("""\+*\d+(\(\d+\))?\d*""")
+    val reg = Regex("""\+?\d*(\(\d+\))?\d+""")
     if ((phone.isEmpty()) || (!str.matches(reg))) return ""
     return str.filter { (it != '(') && (it != ')') }
 }
@@ -347,6 +347,7 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    if (Regex("""[^><+\-\[\]\s]""") in commands) throw IllegalArgumentException()
     var num = 0
     for (element in commands) {
         when (element) {
@@ -372,9 +373,9 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 var bkt1 = 0
                 while (true) {
                     k++
-                    when {
-                        commands[k] == '[' -> bkt1++
-                        commands[k] == ']' -> bkt1--
+                    when (commands[k]) {
+                        '[' -> bkt1++
+                        ']' -> bkt1--
                     }
                     if (bkt1 < 0) break
                 }
@@ -383,9 +384,9 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 var bkt2 = 0
                 while (true) {
                     k--
-                    when {
-                        commands[k] == ']' -> bkt2++
-                        commands[k] == '[' -> bkt2--
+                    when (commands[k]) {
+                        ']' -> bkt2++
+                        '[' -> bkt2--
                     }
                     if (bkt2 < 0) break
                 }

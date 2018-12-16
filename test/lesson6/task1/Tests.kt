@@ -67,11 +67,13 @@ class Tests {
     fun flattenPhoneNumber() {
         assertEquals("+79211234666", flattenPhoneNumber("+7( 9  2 1  )12 346 - 66"))
         assertEquals("+79211234567", flattenPhoneNumber("+7 (921) 123 - 4567"))
+        assertEquals("9211234567", flattenPhoneNumber("(921) 123 - 4567"))
         assertEquals("79211234567", flattenPhoneNumber("7 (921) 123 - 4567"))
         assertEquals("123456798", flattenPhoneNumber("12 --  34- 5 -- 67 -98"))
         assertEquals("", flattenPhoneNumber("ab-123"))
         assertEquals("4", flattenPhoneNumber("4"))
         assertEquals("+12345", flattenPhoneNumber("+12 (3) 4-5"))
+        assertEquals("", flattenPhoneNumber("+++12 (3) 4-5"))
         assertEquals("", flattenPhoneNumber("134_+874"))
         assertEquals("", flattenPhoneNumber("a134 874"))
         assertEquals("", flattenPhoneNumber(" "))
@@ -166,6 +168,7 @@ class Tests {
                 computeDeviceCells(11, "<<<<< + >>>>>>>>>> --[<-] >+[>+] >++[--< <[<] >+[>+] >++]", 10000))
         assertEquals(listOf(0, 0, -1, -1, -1, 0, 0, 0, 0, 0), computeDeviceCells(10, "<-<-<-<-<-", 6))
         assertEquals(listOf(1, 1, 1, 0, 0, -1, 0, 0, 0, 0), computeDeviceCells(10, "- <<<<< +[>+]", 17))
+        assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(5, "+-+-<<<+a", 2) }
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(10, "===", 3) }
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(10, "+>+>[+>", 3) }
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(20, "[[]-]-<<][-<[<]", 333) }
