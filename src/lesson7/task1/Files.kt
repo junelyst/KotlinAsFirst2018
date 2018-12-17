@@ -645,6 +645,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         var num = 0  // число, из которого вычитаем
         var numStr = String()
         var ind = 0  // индекс делимого
+        val k = (lhv % rhv).toString()  // остаток
         it.write(" $lhv | $rhv\n")
         for (element in res.toString()) {
             val sub = (element - '0') * rhv // вычитаемое
@@ -669,9 +670,16 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
                         val space = ind - numStr.length + 1
                         numStr += lhvStr[ind]
                         it.write(" ".repeat(space) + numStr + "\n")
-                        val see = ind - subLen - 1
                         it.write(" ".repeat(ind - subLen - 1 + 2) + "-$sub" + "\n")
-                        it.write(" ".repeat(ind - subLen - 1 + 2) + "-".repeat(subLen + 1) + "\n")
+                        if (ind != lhvLen - 1) {
+                            it.write(" ".repeat(ind - subLen - 1 + 2) + "-".repeat(subLen + 1) + "\n")
+                        }
+                        else {
+                            if (k.length > subLen + 1) {
+                                it.write(" ".repeat(ind - k.length + 2) + "-".repeat(k.length) + "\n")
+                            }
+                            else it.write(" ".repeat(ind - subLen - 1 + 2) + "-".repeat(subLen + 1) + "\n")
+                        }
                         ind++
                         num = numStr.toInt()
                         num -= sub
@@ -681,10 +689,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             }
             count++
         }
-        val k = (lhv % rhv).toString()
-        if (ind != 0) {
-            it.write(" ".repeat(ind - k.length - 1 + 2) + k)
-        }
+        if (ind != 0) it.write(" ".repeat(ind - k.length - 1 + 2) + k)
         else it.write(" ".repeat(lhvLen + 1 - numStr.length) + k)
     }
 }
