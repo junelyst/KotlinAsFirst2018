@@ -56,7 +56,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val res = mutableMapOf<String, Int>()
-    val str = File(inputName).inputStream().readBytes().toString(Charsets.UTF_8).toLowerCase()
+    val str = File(inputName).readText().toLowerCase()
     for (element in substrings) {
         var count = 0
         val sub = element.toLowerCase()
@@ -89,12 +89,12 @@ fun sibilants(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use {
         for (line in File(inputName).readLines()) {
             var new = line
-                new = Regex("""(?<=[жчшщЖЧШЩ])ы""").replace(new, "и")
-                new = Regex("""(?<=[жчшщЖЧШЩ])я""").replace(new, "а")
-                new = Regex("""(?<=[жчшщЖЧШЩ])ю""").replace(new, "у")
-                new = Regex("""(?<=[жчшщЖЧШЩ])Ы""").replace(new, "И")
-                new = Regex("""(?<=[жчшщЖЧШЩ])Я""").replace(new, "А")
-                new = Regex("""(?<=[жчшщЖЧШЩ])Ю""").replace(new, "У")
+            new = Regex("""(?<=[жчшщЖЧШЩ])ы""").replace(new, "и")
+            new = Regex("""(?<=[жчшщЖЧШЩ])я""").replace(new, "а")
+            new = Regex("""(?<=[жчшщЖЧШЩ])ю""").replace(new, "у")
+            new = Regex("""(?<=[жчшщЖЧШЩ])Ы""").replace(new, "И")
+            new = Regex("""(?<=[жчшщЖЧШЩ])Я""").replace(new, "А")
+            new = Regex("""(?<=[жчшщЖЧШЩ])Ю""").replace(new, "У")
             it.write(new)
             it.newLine()
         }
@@ -235,12 +235,11 @@ fun alignFileByWidth(inputName: String, outputName: String) {
 fun top20Words(inputName: String): Map<String, Int> {
     val res = mutableMapOf<String, Int>()
     for (line in File(inputName).readLines()) {
-        for (word in line.split(Regex("[\\p{Punct}\\s\\d«»—]")).filter { it != "" }) {
-            if (word.toLowerCase() !in res) res += word.toLowerCase() to 1
-            else res[word.toLowerCase()] = res[word.toLowerCase()]!!.plus(1)
+        for (word in line.toLowerCase().split(Regex("""[^а-яa-zё]+""")).filter { it != "" }) {
+            res[word] = res[word]?.plus(1) ?: 1
         }
     }
-    val resSort = res.toList().sortedBy { it.second }.reversed().toMap()
+    val resSort = res.toList().sortedByDescending { it.second }
     var count = 0
     val top = mutableMapOf<String, Int>()
     for ((name, num) in resSort) {
@@ -422,7 +421,7 @@ fun markdown(str: String, reg: Regex, murkup: String, r1: String, r2: String): S
 }
 
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    var input = File(inputName).inputStream().readBytes().toString(Charsets.UTF_8)
+    var input = File(inputName).readText()
     File(outputName).bufferedWriter().use {
         it.write("<html><body><p>")
         if ("***" in input) {
@@ -638,41 +637,55 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     File(outputName).bufferedWriter().use {
         val lhvLen = lhv.toString().length
         val rhvLen = rhv.toString().length
-        val max = lhvLen + rhvLen
+        val lhvStr = lhv.toString()
+        val rhvStr = rhv.toString()
         val res = lhv / rhv
+        val resStr = res.toString()
         var count = 0
-        var i = 0
+        var num = 0  // число, из которого вычитаем
         var numStr = String()
-        var num = 0
-        var space = 0
+        var ind = 0  // индекс делимого
         it.write(" $lhv | $rhv\n")
         for (element in res.toString()) {
-            val x = (element - '0') * rhv // вычитаемое
-            when {
-                count == 0 -> {
-                    it.write("-$x" + " ".repeat(max - rhvLen - 1) + res + "\n")
-                    it.write("-".repeat(x.toString().length + 1) + "\n")
-                }
-                count == 1 -> {
-                    while (i < x.toString().length) { //собираем вычитаемое из lhv
-                        numStr += lhv.toString()[i]
-                        i++ // счётчик разрядов
+            val sub = (element - '0') * rhv // вычитаемое
+            val subLen = sub.toString().length
+            when (count) {
+                0 -> {
+                    it.write("-$sub" + " ".repeat(lhvLen + 3 - subLen) + "$res" + "\n")  // вторая строка
+                    it.write("-".repeat(subLen + 1) + "\n")
+                    for ((i, el) in lhvStr.withIndex()) {
+                        numStr += el
+                        num = numStr.toInt()
+                        if (num >= rhv) {
+                            ind = i + 1
+                            break
+                        }
                     }
-                    num = numStr.toInt()
-                    val a = "${num - x}" + "${lhv.toString()[i + 2]}" // число под чертой
-                    it.write(" ".repeat(a.length + 1)) //пробелы перед этим числом
-                    it.write(a + "\n")
-                    num = a.toInt()
-                    space = 2 * a.length - "${(element - '0') * rhv}".length
-                    it.write( " ".repeat(space) + "-${(element - '0') * rhv}" + "\n")
-                    it.write(" ".repeat(space) + "-".repeat("${(element - '0') * rhv}".length + 1))
+                    num -= sub
+                    numStr = num.toString()
                 }
                 else -> {
-
+                    if (ind < lhvLen) {
+                        val space = ind - numStr.length + 1
+                        numStr += lhvStr[ind]
+                        it.write(" ".repeat(space) + numStr + "\n")
+                        val see = ind - subLen - 1
+                        it.write(" ".repeat(ind - subLen - 1 + 2) + "-$sub" + "\n")
+                        it.write(" ".repeat(ind - subLen - 1 + 2) + "-".repeat(subLen + 1) + "\n")
+                        ind++
+                        num = numStr.toInt()
+                        num -= sub
+                        numStr = num.toString()
+                    }
                 }
             }
             count++
         }
+        val k = (lhv % rhv).toString()
+        if (ind != 0) {
+            it.write(" ".repeat(ind - k.length - 1 + 2) + k)
+        }
+        else it.write(" ".repeat(lhvLen + 1 - numStr.length) + k)
     }
 }
 
