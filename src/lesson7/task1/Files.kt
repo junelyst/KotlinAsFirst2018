@@ -634,25 +634,20 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     File(outputName).bufferedWriter().use {
         val lhvStr = lhv.toString()
-        val rhvStr = rhv.toString()
         val lhvLen = lhvStr.length
-        val rhvLen = rhvStr.length
         val res = lhv / rhv
-        val resStr = res.toString()
         var count = 0
         var num = 0  // число, из которого вычитаем
         var numStr = String()
         var numLen = 0
         var ind = 0  // индекс делимого
         val k = (lhv % rhv).toString()  // остаток
-        it.write(" $lhv | $rhv\n")
+        var sp = 1
         for (element in res.toString()) {
             val sub = (element - '0') * rhv // вычитаемое
             val subLen = sub.toString().length
             when (count) {
                 0 -> {
-                    it.write("-$sub" + " ".repeat(lhvLen + 3 - subLen) + "$res" + "\n")  // вторая строка
-                    it.write("-".repeat(subLen + 1) + "\n")
                     for ((i, el) in lhvStr.withIndex()) {
                         numStr += el
                         num = numStr.toInt()
@@ -661,15 +656,25 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
                             break
                         }
                     }
+
+                    if (numStr.length == subLen + 1) {
+                        it.write("$lhv | $rhv\n")
+                        sp = 0
+                    }
+                    else it.write(" $lhv | $rhv\n")
+
+                    it.write("-$sub" + " ".repeat(lhvLen + 2 + sp - subLen) + "$res" + "\n")  // вторая строка
+                    it.write("-".repeat(subLen + 1) + "\n")
+
                     num -= sub
                     numStr = num.toString()
                 }
                 else -> {
                     if (ind < lhvLen) {
-                        val space = ind - numStr.length + 1
+                        val space = ind - numStr.length + sp
                         numStr += lhvStr[ind]
                         it.write(" ".repeat(space) + numStr + "\n")
-                        it.write(" ".repeat(ind - subLen - 1 + 2) + "-$sub" + "\n")
+                        it.write(" ".repeat(ind - subLen - 1 + 1 + sp) + "-$sub" + "\n")
 
                         num = numStr.toInt()
                         num -= sub
@@ -678,14 +683,14 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
 
                         if (ind != lhvLen - 1) {       // определение длины черты
                             if (subLen + 1 >= numLen)
-                                it.write(" ".repeat(ind - subLen - 1 + 2) + "-".repeat(subLen + 1) + "\n")
-                            else it.write(" ".repeat(ind - numLen + 2) + "-".repeat(numLen) + "\n")
+                                it.write(" ".repeat(ind - subLen - 1 + 1 + sp) + "-".repeat(subLen + 1) + "\n")
+                            else it.write(" ".repeat(ind - numLen + 1 + sp) + "-".repeat(numLen) + "\n")
                         }
                         else {      // черта над остатком
                             if (k.length > subLen + 1) {
-                                it.write(" ".repeat(ind - k.length + 2) + "-".repeat(k.length) + "\n")
+                                it.write(" ".repeat(ind - k.length + 1 + sp) + "-".repeat(k.length) + "\n")
                             }
-                            else it.write(" ".repeat(ind - subLen - 1 + 2) + "-".repeat(subLen + 1) + "\n")
+                            else it.write(" ".repeat(ind - subLen - 1 + 1 + sp) + "-".repeat(subLen + 1) + "\n")
                         }
                         ind++
                     }
@@ -693,8 +698,8 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             }
             count++
         }
-        if (ind != 0) it.write(" ".repeat(ind - k.length - 1 + 2) + k)
-        else it.write(" ".repeat(lhvLen + 1 - numStr.length) + k)
+        if (ind != 0) it.write(" ".repeat(ind - k.length - 1 + 1 + sp) + k)
+        else it.write(" ".repeat(lhvLen + sp - numStr.length) + k)
     }
 }
 
