@@ -583,23 +583,21 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     File(outputName).bufferedWriter().use {
         val lhvLen = lhv.toString().length
         val rhvLen = rhv.toString().length
-        val max =
-                if (rhvLen == 1) ((rhv.toString()[0] - '0') * lhv).toString().length + rhvLen
-                else ((rhv.toString().toInt()) * lhv).toString().length + 1
         val res = lhv * rhv
+        val max = res.toString().length + 1
         it.write(" ".repeat(max - lhvLen) + lhv + "\n")
         it.write("*" + " ".repeat(max - rhvLen - 1) + rhv + "\n")
         it.write("-".repeat(max) + "\n")
         var num = rhv
         var count = 0
         while (num > 0) {
-            val x = (num % 10) * lhv
+            val x = ((num % 10) * lhv).toString()
             num /= 10
             if (count > 0) {
-                it.write("+" + " ".repeat(max - x.toString().length - count - 1) + x + "\n")
+                it.write("+" + " ".repeat(max - x.length - count - 1) + x + "\n")
             }
             else {
-                it.write(" ".repeat(max - x.toString().length) + x + "\n")
+                it.write(" ".repeat(max - x.length) + x + "\n")
             }
             count++
         }
@@ -635,15 +633,16 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     File(outputName).bufferedWriter().use {
-        val lhvLen = lhv.toString().length
-        val rhvLen = rhv.toString().length
         val lhvStr = lhv.toString()
         val rhvStr = rhv.toString()
+        val lhvLen = lhvStr.length
+        val rhvLen = rhvStr.length
         val res = lhv / rhv
         val resStr = res.toString()
         var count = 0
         var num = 0  // число, из которого вычитаем
         var numStr = String()
+        var numLen = 0
         var ind = 0  // индекс делимого
         val k = (lhv % rhv).toString()  // остаток
         it.write(" $lhv | $rhv\n")
@@ -671,19 +670,24 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
                         numStr += lhvStr[ind]
                         it.write(" ".repeat(space) + numStr + "\n")
                         it.write(" ".repeat(ind - subLen - 1 + 2) + "-$sub" + "\n")
-                        if (ind != lhvLen - 1) {
-                            it.write(" ".repeat(ind - subLen - 1 + 2) + "-".repeat(subLen + 1) + "\n")
+
+                        num = numStr.toInt()
+                        num -= sub
+                        numStr = num.toString()
+                        numLen = numStr.length
+
+                        if (ind != lhvLen - 1) {       // определение длины черты
+                            if (subLen + 1 >= numLen)
+                                it.write(" ".repeat(ind - subLen - 1 + 2) + "-".repeat(subLen + 1) + "\n")
+                            else it.write(" ".repeat(ind - numLen + 2) + "-".repeat(numLen) + "\n")
                         }
-                        else {
+                        else {      // черта над остатком
                             if (k.length > subLen + 1) {
                                 it.write(" ".repeat(ind - k.length + 2) + "-".repeat(k.length) + "\n")
                             }
                             else it.write(" ".repeat(ind - subLen - 1 + 2) + "-".repeat(subLen + 1) + "\n")
                         }
                         ind++
-                        num = numStr.toInt()
-                        num -= sub
-                        numStr = num.toString()
                     }
                 }
             }
