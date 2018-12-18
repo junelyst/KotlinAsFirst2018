@@ -657,14 +657,17 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
                         }
                     }
 
-                    if (numStr.length == subLen + 1) {
+                    if (numStr.length >= subLen + 1) {
                         it.write("$lhv | $rhv\n")
                         sp = 0
                     }
                     else it.write(" $lhv | $rhv\n")
 
-                    it.write("-$sub" + " ".repeat(lhvLen + 2 + sp - subLen) + "$res" + "\n")  // вторая строка
-                    it.write("-".repeat(subLen + 1) + "\n")
+                    val sum = numStr.length - subLen - 1 + sp
+                    it.write(" ".repeat(sum) + "-$sub" + " ".repeat(lhvLen + 2 + sp - subLen - sum) + "$res" + "\n")  // вторая строка
+                    if (res / 10 != 0)
+                        it.write("-".repeat(subLen + 1) + "\n")
+                    else it.write("-".repeat(maxOf(k.length, subLen + 1)) + "\n")
 
                     num -= sub
                     numStr = num.toString()
